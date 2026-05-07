@@ -1,0 +1,40 @@
+{
+  "name": "quantumcatalyst-ai",
+  "version": "1.0.0",
+  "description": "Cinematic investor-grade demo website for QuantumCatalyst AI",
+  "main": "server.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "legacy:dev": "node server.js"
+  },
+  "keywords": [
+    "quantum",
+    "catalyst",
+    "vqe",
+    "generative-ai",
+    "chemistry"
+  ],
+  "author": "QuantumCatalyst AI Prototype",
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "autoprefixer": "^10.5.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "framer-motion": "^12.38.0",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.14.0",
+    "next": "^15.5.16",
+    "postcss": "^8.5.14",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^3.4.17",
+    "three": "^0.184.0"
+  }
+}

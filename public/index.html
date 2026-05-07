@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuantumCatalyst AI — Catalyst Discovery Platform</title>
+    <meta name="description" content="Run reaction-specific catalyst discovery combining quantum energy profiling, generative AI, and continuous experimental feedback." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+  </head>
+  <body>
+
+    <!-- ── Navbar ─────────────────────────────────────────── -->
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <svg class="brand-hex" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L21.196 7V17L12 22L2.804 17V7L12 2Z" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M12 7L17 10V16L12 19L7 16V10L12 7Z" fill="#22d3ee" fill-opacity="0.2" stroke="#22d3ee" stroke-width="1"/>
+          </svg>
+          <span class="brand-name">QuantumCatalyst <span class="brand-ai">AI</span></span>
+        </div>
+
+        <div class="nav-links">
+          <a href="#discover" class="nav-link">Discover</a>
+          <a href="#studio" class="nav-link">Molecule Studio</a>
+          <a href="#candidates" class="nav-link">Candidates</a>
+          <a href="#feedback" class="nav-link">Feedback</a>
+        </div>
+
+        <div class="nav-actions">
+          <div id="statusBadge" class="status-badge status-idle">
+            <span class="status-dot"></span>
+            <span class="status-text">Ready</span>
+          </div>
+          <button id="settingsBtn" class="btn-icon" title="Settings" aria-label="Open settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <button id="chatToggleBtn" class="btn-copilot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>AI Copilot</span>
+            <span class="chat-badge" id="chatBadge" hidden>!</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Hero / Pipeline Control ────────────────────────── -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <p class="hero-eyebrow">Quantum + Generative Catalyst Design</p>
+            <h1 class="hero-title">Design better catalysts<br>in <span class="gradient-text">minutes</span>, not months.</h1>
+            <p class="hero-desc">
+              Reaction-specific discovery combining quantum energy profiling,
+              AI candidate generation, and a feedback loop tuned for industrial deployment.
+            </p>
+          </div>
+
+          <div class="control-card glass-card">
+            <div class="control-card-header">
+              <span class="control-card-title">Pipeline Control</span>
+              <span class="control-badge">VQE + Gen·AI</span>
+            </div>
+            <div class="control-grid">
+              <div class="form-group">
+                <label class="field-label" for="reactionSelect">Target reaction</label>
+                <select id="reactionSelect" class="select-field"></select>
+              </div>
+              <div class="form-group form-grow">
+                <label class="field-label" for="useCaseInput">Use-case objective</label>
+                <input
+                  id="useCaseInput"
+                  class="input-field"
+                  placeholder="e.g. Cost-sensitive pilot with high selectivity"
+                />
+              </div>
+              <div class="form-group">
+                <label class="field-label">&nbsp;</label>
+                <button id="runBtn" class="btn-primary btn-run">
+                  <svg class="btn-run-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5,3 19,12 5,21"/>
+                  </svg>
+                  Run Discovery
+                </button>
+              </div>
+            </div>
+            <p id="runMeta" class="run-meta"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Main Content ───────────────────────────────────── -->
+    <main class="container main-content">
+
+      <!-- KPI Dashboard -->
+      <section id="discover" class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Discovery Snapshot</h2>
+            <p class="section-subtitle">Live metrics from the latest pipeline run</p>
+          </div>
+          <span class="section-tag">Real-time</span>
+        </div>
+        <div class="kpi-grid">
+          <article class="kpi-card glass-card">
+            <div class="kpi-icon-wrap kpi-blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <p class="kpi-label">Top Candidate</p>
+              <h3 id="kpiCandidate" class="kpi-value">—</h3>
+            </div>
+          </article>
+          <article class="kpi-card glass-card">
+            <div class="kpi-icon-wrap kpi-cyan">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <p class="kpi-label">Activity Score</p>
+              <h3 id="kpiActivity" class="kpi-value">—</h3>
+            </div>
+          </article>
+          <article class="kpi-card glass-card">
+            <div class="kpi-icon-wrap kpi-violet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <p class="kpi-label">Selectivity</p>
+              <h3 id="kpiSelectivity" class="kpi-value">—</h3>
+            </div>
+          </article>
+          <article class="kpi-card glass-card">
+            <div class="kpi-icon-wrap kpi-emerald">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <p class="kpi-label">Stability</p>
+              <h3 id="kpiStability" class="kpi-value">—</h3>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Molecule Studio -->
+      <section id="studio" class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Molecule Studio</h2>
+            <p class="section-subtitle">3D structure visualization and top candidate analysis</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn-secondary" id="exportBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="studio-grid">
+          <!-- 3D Viewer -->
+          <article class="glass-card studio-viewer-card">
+            <div class="card-header">
+              <span class="card-title">3D Structure Viewer</span>
+              <div class="viewer-style-btns" role="group" aria-label="Viewer style">
+                <button class="btn-xs btn-xs-active" onclick="setViewerStyle('stick')" data-style="stick">Stick</button>
+                <button class="btn-xs" onclick="setViewerStyle('sphere')" data-style="sphere">Sphere</button>
+              </div>
+            </div>
+            <div id="viewerWrap">
+              <div id="viewer"></div>
+              <div id="viewerOverlay" class="viewer-overlay">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.4">
+                  <path d="M12 2L21.196 7V17L12 22L2.804 17V7L12 2Z" stroke-linejoin="round"/>
+                </svg>
+                <p>Run pipeline to load structure</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Side panels -->
+          <div class="studio-side">
+            <article class="glass-card">
+              <div class="card-header">
+                <span class="card-title">Top Recommendation</span>
+              </div>
+              <div id="topRecommendation" class="empty-state">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                </svg>
+                <span>Run pipeline to see best candidate</span>
+              </div>
+              <div id="useCaseDecision" class="use-case-block"></div>
+            </article>
+
+            <article class="glass-card">
+              <div class="card-header">
+                <span class="card-title">Synthetic Biology Pathway</span>
+                <span class="card-tag">AI-mapped</span>
+              </div>
+              <div id="bioHints" class="empty-state">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                  <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+                </svg>
+                <span>Run pipeline to view pathway hints</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Candidates Table -->
+      <section id="candidates" class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Ranked Candidates</h2>
+            <p class="section-subtitle">All candidates sorted by composite score</p>
+          </div>
+          <span class="count-badge" id="candidateCount">0 candidates</span>
+        </div>
+        <article class="glass-card table-card">
+          <div class="table-wrap">
+            <table id="candidatesTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Source</th>
+                  <th>Activity</th>
+                  <th>Selectivity</th>
+                  <th>Stability</th>
+                  <th>Total Score</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="candidateRows">
+                <tr>
+                  <td colspan="8" class="table-empty">Run the pipeline to load candidates</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- AI Copilot inline + Bio hints removed: both in chat panel now -->
+
+      <!-- Feedback Loop -->
+      <section id="feedback" class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Feedback Loop</h2>
+            <p class="section-subtitle">Submit measured results to improve the model</p>
+          </div>
+          <span class="section-tag">Closes the learning loop</span>
+        </div>
+        <div class="feedback-grid">
+          <article class="glass-card">
+            <div class="card-header">
+              <span class="card-title">Submit Experiment Result</span>
+            </div>
+            <form id="feedbackForm" class="feedback-form">
+              <div class="form-row-5">
+                <div class="form-group">
+                  <label class="field-label" for="candidateId">Candidate ID</label>
+                  <input id="candidateId" class="input-field" required placeholder="CAT-001" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="yield">Measured yield</label>
+                  <input id="yield" class="input-field" type="number" min="0" max="1" step="0.01" required placeholder="0.85" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="selectivity">Selectivity</label>
+                  <input id="selectivity" class="input-field" type="number" min="0" max="1" step="0.01" required placeholder="0.78" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="stability">Stability</label>
+                  <input id="stability" class="input-field" type="number" min="0" max="1" step="0.01" required placeholder="0.80" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">&nbsp;</label>
+                  <button type="submit" class="btn-primary">Submit</button>
+                </div>
+              </div>
+            </form>
+            <p id="feedbackMsg" class="feedback-msg"></p>
+          </article>
+
+          <article class="glass-card">
+            <div class="card-header">
+              <span class="card-title">Experiment Log</span>
+              <span class="count-badge" id="logCount">0 runs</span>
+            </div>
+            <ul id="feedbackLogs" class="log-list">
+              <li class="log-empty">No experiments logged yet</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ── Footer ─────────────────────────────────────────── -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L21.196 7V17L12 22L2.804 17V7L12 2Z" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>QuantumCatalyst AI</span>
+          <span class="footer-version">v1.0 Research Preview</span>
+        </div>
+        <p class="footer-note">Powered by VQE simulation · Generative AI · Continuous experimental learning</p>
+      </div>
+    </footer>
+
+    <!-- ── AI Chat Panel ──────────────────────────────────── -->
+    <aside id="chatPanel" class="chat-panel" aria-label="AI Copilot" aria-hidden="true">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="chat-avatar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <p class="chat-title">AI Copilot</p>
+            <p class="chat-subtitle" id="chatSubtitle">Ready to assist</p>
+          </div>
+        </div>
+        <div class="chat-header-right">
+          <span id="chatProviderBadge" class="provider-badge">offline</span>
+          <button id="chatCloseBtn" class="btn-icon" aria-label="Close chat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="chatMessages" class="chat-messages">
+        <div class="chat-welcome">
+          <p class="chat-welcome-title">QuantumCatalyst AI Copilot</p>
+          <p class="chat-welcome-text">
+            Run the discovery pipeline first, then ask me anything — catalyst properties,
+            pathway suggestions, experimental strategies, or quantum simulation details.
+          </p>
+          <div class="chat-suggestions">
+            <button class="suggestion-chip" onclick="sendSuggestion('What is the best catalyst for this reaction and why?')">Best catalyst?</button>
+            <button class="suggestion-chip" onclick="sendSuggestion('Explain the VQE simulation results in simple terms')">Explain VQE</button>
+            <button class="suggestion-chip" onclick="sendSuggestion('What experiments should I run first and in what order?')">Next steps</button>
+            <button class="suggestion-chip" onclick="sendSuggestion('Compare the top 3 candidates across all metrics')">Compare top 3</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-key-warning" id="chatKeyWarning" hidden>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>Add OpenAI key in <button onclick="openSettings()" class="link-btn">Settings</button> to enable AI chat</span>
+        </div>
+        <div class="chat-input-row">
+          <textarea
+            id="chatInput"
+            class="chat-input"
+            placeholder="Ask about catalysts, reactions, or experiment strategies…"
+            rows="1"
+            aria-label="Chat message"
+          ></textarea>
+          <button id="chatSendBtn" class="btn-send" aria-label="Send message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/>
+            </svg>
+          </button>
+        </div>
+        <p class="chat-disclaimer">AI responses are based on pipeline results and scientific literature.</p>
+      </div>
+    </aside>
+
+    <!-- Chat floating button -->
+    <button id="chatFloatingBtn" class="chat-float-btn" title="Open AI Copilot">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span class="chat-float-label">AI Copilot</span>
+    </button>
+
+    <!-- ── Settings Modal ─────────────────────────────────── -->
+    <div id="settingsModal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal glass-card">
+        <div class="modal-header">
+          <h3 class="modal-title" id="settingsTitle">Settings</h3>
+          <button id="settingsCloseBtn" class="btn-icon" aria-label="Close settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-section">
+            <h4 class="settings-section-title">AI Configuration</h4>
+            <div class="form-group">
+              <label class="field-label" for="apiKeyInput">OpenAI API Key</label>
+              <div class="input-with-toggle">
+                <input id="apiKeyInput" class="input-field" type="password" placeholder="sk-…" autocomplete="off" />
+                <button type="button" class="btn-eye" id="toggleApiKey" aria-label="Toggle visibility">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="field-hint">Stored in your browser. Used for AI Copilot chat and enhanced pipeline insights.</p>
+            </div>
+            <div class="form-group">
+              <label class="field-label" for="modelSelect">AI Model</label>
+              <select id="modelSelect" class="select-field">
+                <option value="gpt-4o-mini">GPT-4o mini — fast, economical</option>
+                <option value="gpt-4o">GPT-4o — most capable</option>
+                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h4 class="settings-section-title">Pipeline Preferences</h4>
+            <label class="checkbox-label">
+              <input type="checkbox" id="autoRunChat" />
+              <span>Auto-generate AI analysis after each pipeline run</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="saveSettingsBtn" class="btn-primary">Save Settings</button>
+          <button id="cancelSettingsBtn" class="btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

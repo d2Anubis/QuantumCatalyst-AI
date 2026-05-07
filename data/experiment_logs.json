@@ -1,0 +1,30 @@
+[
+  {
+    "timestamp": "2026-05-07T10:22:29.219Z",
+    "reactionKey": "ethanol-to-jet",
+    "candidateId": "CAT-003",
+    "measuredYield": 0.82,
+    "measuredSelectivity": 0.76,
+    "measuredStability": 0.79,
+    "predictionBeforeFeedback": {
+      "activity": 0.8780123706305006,
+      "selectivity": 0.9657899999999999,
+      "stability": 0.8893140743016881,
+      "total": 0.9071710853591473
+    }
+  },
+  {
+    "timestamp": "2026-05-07T10:22:58.928Z",
+    "reactionKey": "ethanol-to-jet",
+    "candidateId": "CAT-003",
+    "measuredYield": 0.82,
+    "measuredSelectivity": 0.76,
+    "measuredStability": 0.79,
+    "predictionBeforeFeedback": {
+      "activity": 0.8780123706305006,
+      "selectivity": 0.9657899999999999,
+      "stability": 0.8893140743016881,
+      "total": 0.9071710853591473
+    }
+  }
+]
