@@ -9,7 +9,25 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+
+// Functional app — served at /app (all relative asset/API paths still resolve correctly)
+app.use("/app", express.static(path.join(__dirname, "public")));
+
+// Marketing page — Next.js static export served at /
+// Built by `npm run build` into the `out/` directory
+const outDir = path.join(__dirname, "out");
+if (fs.existsSync(outDir)) {
+  app.use(express.static(outDir));
+}
+
+// Root fallback: redirect to /app if no Next.js build exists yet
+app.get("/", (req, res) => {
+  if (fs.existsSync(path.join(outDir, "index.html"))) {
+    res.sendFile(path.join(outDir, "index.html"));
+  } else {
+    res.redirect("/app");
+  }
+});
 
 const catalystDbPath = path.join(__dirname, "data", "catalysts.json");
 const experimentLogPath = path.join(__dirname, "data", "experiment_logs.json");

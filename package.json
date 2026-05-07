@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "legacy:dev": "node server.js"
+    "build:all": "next build && node server.js",
+    "start": "node server.js",
+    "start:server": "node server.js"
   },
   "keywords": [
     "quantum",

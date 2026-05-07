@@ -153,6 +153,7 @@ function QuantumCanvas() {
 // ── Page ──────────────────────────────────────────────────────
 
 export default function Home() {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "/app";
   const [activeStep, setActiveStep] = useState(2);
   const [progress, setProgress] = useState(14);
   const [logIndex, setLogIndex] = useState(0);
@@ -242,14 +243,14 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <a
-              href="http://localhost:4000"
+              href={appUrl}
               className="hidden rounded-lg border border-white/15 bg-white/[0.04] px-4 py-1.5 text-[13px] font-medium text-slate-300 transition-all hover:border-cyan-300/40 hover:bg-cyan-300/[0.07] hover:text-cyan-100 sm:block"
             >
               Open App
             </a>
             <Button
               size="sm"
-              onClick={() => window.open("http://localhost:4000", "_blank")}
+              onClick={() => window.open(appUrl, "_blank")}
             >
               Launch Platform
             </Button>
@@ -275,7 +276,7 @@ export default function Home() {
               discover breakthrough catalysts for sustainable fuels, carbon conversion, and synthetic biology.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" onClick={() => window.open("http://localhost:4000", "_blank")}>
+              <Button size="lg" onClick={() => window.open(appUrl, "_blank")}>
                 Launch Platform
               </Button>
               <Button size="lg" variant="outline" onClick={() => document.getElementById("platform")?.scrollIntoView({ behavior: "smooth" })}>
@@ -539,7 +540,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Button variant={plan.variant} className="w-full" onClick={() => window.open("http://localhost:4000", "_blank")}>
+              <Button variant={plan.variant} className="w-full" onClick={() => window.open(appUrl, "_blank")}>
                 {plan.cta}
               </Button>
             </motion.div>
@@ -576,7 +577,7 @@ export default function Home() {
           From carbon conversion to synthetic fuels, QuantumCatalyst AI accelerates catalyst discovery at quantum scale.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Button size="lg" onClick={() => window.open("http://localhost:4000", "_blank")}>
+          <Button size="lg" onClick={() => window.open(appUrl, "_blank")}>
             Launch Platform Free
           </Button>
           <Button size="lg" variant="outline" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>
