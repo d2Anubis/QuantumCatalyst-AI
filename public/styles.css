@@ -1253,3 +1253,240 @@ tbody tr:last-child td { border-bottom: none; }
   .kpi-grid     { grid-template-columns: 1fr 1fr; }
   .form-row-5   { grid-template-columns: 1fr; }
 }
+
+/* 18. Pipeline Control — expanded demo layout */
+
+/* Move status badge inside card header */
+.control-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.control-card-header-left { display: flex; align-items: center; gap: 10px; }
+
+/* Reaction conditions row */
+.condition-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
+}
+.condition-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+}
+.condition-chip-wide { flex: 1; min-width: 160px; }
+.condition-chip svg { opacity: 0.45; flex-shrink: 0; }
+.condition-label { color: var(--text-muted); white-space: nowrap; }
+.condition-value { color: var(--text); margin-left: 2px; font-size: 11.5px; font-family: var(--font-mono); white-space: nowrap; }
+
+/* 6-step pipeline tracker */
+.pipeline-track {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-sm);
+  background: rgba(0,0,0,0.18);
+  padding: 12px 14px 10px;
+  margin-bottom: 10px;
+}
+.pipeline-steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.pipe-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.pipe-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s, color 0.3s;
+}
+.pipe-step.active .pipe-dot {
+  border-color: var(--cyan);
+  background: rgba(34,211,238,0.12);
+  color: var(--cyan);
+  box-shadow: 0 0 10px rgba(34,211,238,0.3);
+}
+.pipe-step.done .pipe-dot {
+  border-color: var(--emerald);
+  background: rgba(16,185,129,0.1);
+  color: var(--emerald);
+}
+.pipe-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+.pipe-step.active .pipe-label { color: var(--cyan); font-weight: 600; }
+.pipe-step.done  .pipe-label { color: var(--emerald); }
+.pipe-connector {
+  flex: 1;
+  height: 1.5px;
+  background: rgba(255,255,255,0.07);
+  margin: 0 4px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.pipe-connector::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--emerald), var(--cyan));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.pipe-connector.done::after { transform: scaleX(1); }
+
+/* Progress bar row */
+.pipe-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pipe-progress-track {
+  flex: 1;
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden;
+}
+.pipe-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan), var(--violet));
+  transition: width 0.45s ease;
+}
+.pipe-log-line {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+/* AI Insights inline panel */
+.ai-insights-inline {
+  margin-top: 10px;
+  border: 1px solid rgba(34,211,238,0.18);
+  border-radius: var(--radius-sm);
+  background: rgba(34,211,238,0.04);
+  padding: 12px 14px;
+  animation: fadeSlideIn 0.4s ease;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ai-insights-inline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ai-insights-inline-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.ai-insights-inline-summary {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+.ai-insights-inline-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: plan-counter;
+}
+.ai-insights-inline-plan li {
+  counter-increment: plan-counter;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.ai-insights-inline-plan li::before {
+  content: counter(plan-counter);
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(34,211,238,0.1);
+  border: 1px solid rgba(34,211,238,0.2);
+  color: var(--cyan);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 18. Provider toggle (Settings modal) */
+.provider-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+.provider-tab {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.provider-tab:hover { color: var(--text-soft); background: rgba(255,255,255,0.06); }
+.provider-tab-active { background: rgba(34,211,238,0.12); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
+
+/* GPS Renewables category badge in reaction select */
+.reaction-category-gps { color: #34d399; font-weight: 700; }
+
+/* Provider badge — gemini variant */
+.provider-badge.gemini { background: rgba(66,133,244,0.12); border-color: rgba(66,133,244,0.3); color: #60a5fa; }
+
+/* Reaction group header styling */
+select optgroup { font-weight: 700; color: var(--text-soft); }

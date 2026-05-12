@@ -32,10 +32,6 @@
         </div>
 
         <div class="nav-actions">
-          <div id="statusBadge" class="status-badge status-idle">
-            <span class="status-dot"></span>
-            <span class="status-text">Ready</span>
-          </div>
           <button id="settingsBtn" class="btn-icon" title="Settings" aria-label="Open settings">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -66,10 +62,20 @@
           </div>
 
           <div class="control-card glass-card">
+
+            <!-- Header -->
             <div class="control-card-header">
-              <span class="control-card-title">Pipeline Control</span>
-              <span class="control-badge">VQE + Gen·AI</span>
+              <div class="control-card-header-left">
+                <span class="control-card-title">Pipeline Control</span>
+                <span class="control-badge">VQE + Gen·AI</span>
+              </div>
+              <div id="statusBadge" class="status-badge status-idle">
+                <span class="status-dot"></span>
+                <span class="status-text">Ready</span>
+              </div>
             </div>
+
+            <!-- Row 1: Reaction + use-case + run -->
             <div class="control-grid">
               <div class="form-group">
                 <label class="field-label" for="reactionSelect">Target reaction</label>
@@ -93,7 +99,97 @@
                 </button>
               </div>
             </div>
+
+            <!-- Row 2: Reaction conditions (auto-filled) -->
+            <div class="condition-row" id="conditionRow">
+              <div class="condition-chip">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                <span class="condition-label">Temperature</span>
+                <strong id="condTemp" class="condition-value">—</strong>
+              </div>
+              <div class="condition-chip">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <span class="condition-label">Pressure</span>
+                <strong id="condPressure" class="condition-value">—</strong>
+              </div>
+              <div class="condition-chip condition-chip-wide">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+                <span class="condition-label">Feedstock</span>
+                <strong id="condFeedstock" class="condition-value">—</strong>
+              </div>
+            </div>
+
+            <!-- 6-step pipeline tracker -->
+            <div class="pipeline-track" id="pipelineTrack">
+              <div class="pipeline-steps">
+                <div class="pipe-step" id="pstep-0">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  </div>
+                  <span class="pipe-label">Input</span>
+                </div>
+                <div class="pipe-connector" id="pconn-0"></div>
+                <div class="pipe-step" id="pstep-1">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+                  </div>
+                  <span class="pipe-label">Retrieval</span>
+                </div>
+                <div class="pipe-connector" id="pconn-1"></div>
+                <div class="pipe-step" id="pstep-2">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                  </div>
+                  <span class="pipe-label">VQE</span>
+                </div>
+                <div class="pipe-connector" id="pconn-2"></div>
+                <div class="pipe-step" id="pstep-3">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>
+                  </div>
+                  <span class="pipe-label">Generative</span>
+                </div>
+                <div class="pipe-connector" id="pconn-3"></div>
+                <div class="pipe-step" id="pstep-4">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  </div>
+                  <span class="pipe-label">Ranking</span>
+                </div>
+                <div class="pipe-connector" id="pconn-4"></div>
+                <div class="pipe-step" id="pstep-5">
+                  <div class="pipe-dot">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  </div>
+                  <span class="pipe-label">Feedback</span>
+                </div>
+              </div>
+
+              <!-- Progress bar + log line -->
+              <div class="pipe-progress-row">
+                <div class="pipe-progress-track">
+                  <div id="pipeProgressFill" class="pipe-progress-fill" style="width:0%"></div>
+                </div>
+                <span id="pipeLogLine" class="pipe-log-line">Awaiting run…</span>
+              </div>
+            </div>
+
+            <!-- Run meta -->
             <p id="runMeta" class="run-meta"></p>
+
+            <!-- AI Insights inline (appears after run) -->
+            <div id="aiInsightsInline" class="ai-insights-inline" hidden>
+              <div class="ai-insights-inline-header">
+                <span class="ai-insights-inline-title">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                  AI Copilot Summary
+                </span>
+                <span id="aiInlineProvider" class="provider-badge offline">offline</span>
+              </div>
+              <p id="aiInlineSummary" class="ai-insights-inline-summary"></p>
+              <ol id="aiInlinePlan" class="ai-insights-inline-plan"></ol>
+            </div>
+
           </div>
         </div>
       </div>
@@ -329,7 +425,7 @@
           <span>QuantumCatalyst AI</span>
           <span class="footer-version">v1.0 Research Preview</span>
         </div>
-        <p class="footer-note">Powered by VQE simulation · Generative AI · Continuous experimental learning</p>
+        <p class="footer-note">Powered by VQE simulation · Generative AI (OpenAI + Gemini) · GPS Renewables Biogas Pipeline · Continuous experimental learning</p>
       </div>
     </footer>
 
@@ -378,7 +474,7 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
-          <span>Add OpenAI key in <button onclick="openSettings()" class="link-btn">Settings</button> to enable AI chat</span>
+          <span>Add an OpenAI (<code>sk-…</code>) or Gemini (<code>AIza…</code>) key in <button onclick="openSettings()" class="link-btn">Settings</button> to enable AI chat</span>
         </div>
         <div class="chat-input-row">
           <textarea
@@ -420,8 +516,18 @@
         <div class="modal-body">
           <div class="settings-section">
             <h4 class="settings-section-title">AI Configuration</h4>
+
+            <!-- Provider selector -->
             <div class="form-group">
-              <label class="field-label" for="apiKeyInput">OpenAI API Key</label>
+              <label class="field-label">AI Provider</label>
+              <div class="provider-toggle" id="providerToggle">
+                <button class="provider-tab provider-tab-active" data-provider="openai" id="tabOpenAI">OpenAI</button>
+                <button class="provider-tab" data-provider="gemini" id="tabGemini">Google Gemini</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="apiKeyInput" id="apiKeyLabel">OpenAI API Key</label>
               <div class="input-with-toggle">
                 <input id="apiKeyInput" class="input-field" type="password" placeholder="sk-…" autocomplete="off" />
                 <button type="button" class="btn-eye" id="toggleApiKey" aria-label="Toggle visibility">
@@ -430,14 +536,22 @@
                   </svg>
                 </button>
               </div>
-              <p class="field-hint">Stored in your browser. Used for AI Copilot chat and enhanced pipeline insights.</p>
+              <p class="field-hint" id="apiKeyHint">Stored in your browser only. Paste your <strong>OpenAI</strong> key (starts with <code>sk-</code>).</p>
             </div>
             <div class="form-group">
               <label class="field-label" for="modelSelect">AI Model</label>
               <select id="modelSelect" class="select-field">
-                <option value="gpt-4o-mini">GPT-4o mini — fast, economical</option>
-                <option value="gpt-4o">GPT-4o — most capable</option>
-                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                <optgroup label="OpenAI" id="openaiModels">
+                  <option value="gpt-4o-mini">GPT-4o mini — fast, economical</option>
+                  <option value="gpt-4o">GPT-4o — most capable</option>
+                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                </optgroup>
+                <optgroup label="Google Gemini" id="geminiModels">
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash — fast, free tier</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro — most capable</option>
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash — latest</option>
+                  <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite — ultra-fast</option>
+                </optgroup>
               </select>
             </div>
           </div>

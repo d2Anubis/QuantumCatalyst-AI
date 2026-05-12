@@ -19,9 +19,31 @@ const state = {
   },
 };
 
+// ── Reaction conditions lookup ────────────────────────────────
+const REACTION_CONDITIONS = {
+  "ethanol-to-jet":         { temp: "280 °C",    pressure: "3.2 bar",   feedstock: "Bioethanol (95% EtOH)" },
+  "co2-to-methanol":        { temp: "240 °C",    pressure: "50 bar",    feedstock: "CO₂ / H₂ (3:1 ratio)" },
+  "syngas-to-ethanol":      { temp: "300 °C",    pressure: "60 bar",    feedstock: "CO / H₂ Syngas" },
+  "biogas-upgrading":       { temp: "25–40 °C",  pressure: "5–10 bar",  feedstock: "Raw Biogas (CH₄ 60%, CO₂ 38%, H₂S 2%)" },
+  "waste-to-biogas":        { temp: "35–37 °C",  pressure: "1 atm",     feedstock: "Organic Waste / Agri Residue" },
+  "biomethane-to-hydrogen": { temp: "800–900 °C",pressure: "20–30 bar", feedstock: "Biomethane (97% CH₄)" },
+  "biogas-co2-utilization": { temp: "280–350 °C",pressure: "5–20 bar",  feedstock: "CO₂ + Renewable H₂ (4:1)" },
+};
+
+const PIPE_STEPS = ["Input", "Retrieval", "VQE Sim", "Generative", "Ranking", "Feedback"];
+const PIPE_LOGS  = [
+  "Loading reaction parameters…",
+  "Querying catalyst database…",
+  "Running VQE energy profiles…",
+  "Generating novel candidates…",
+  "Computing Pareto ranking…",
+  "Updating feedback model…",
+];
+
 // ── DOM refs ─────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
 const reactionSelect   = $("reactionSelect");
+
 const useCaseInput     = $("useCaseInput");
 const runBtn           = $("runBtn");
 const runMeta          = $("runMeta");
@@ -62,6 +84,81 @@ const toggleApiKey     = $("toggleApiKey");
 const candidateCount   = $("candidateCount");
 const logCount         = $("logCount");
 const exportBtn        = $("exportBtn");
+const condTemp         = $("condTemp");
+const condPressure     = $("condPressure");
+const condFeedstock    = $("condFeedstock");
+const pipeProgressFill = $("pipeProgressFill");
+const pipeLogLine      = $("pipeLogLine");
+const aiInsightsInline = $("aiInsightsInline");
+const aiInlineSummary  = $("aiInlineSummary");
+const aiInlinePlan     = $("aiInlinePlan");
+const aiInlineProvider = $("aiInlineProvider");
+
+// ── Reaction conditions ───────────────────────────────────────
+function updateConditions(reactionKey) {
+  const cond = REACTION_CONDITIONS[reactionKey];
+  if (!cond) return;
+  condTemp.textContent      = cond.temp;
+  condPressure.textContent  = cond.pressure;
+  condFeedstock.textContent = cond.feedstock;
+}
+
+// ── Pipeline tracker ──────────────────────────────────────────
+let _pipeTimer = null;
+
+function resetPipeTracker() {
+  for (let i = 0; i < 6; i++) {
+    const step = $(`pstep-${i}`);
+    if (step) { step.classList.remove("active", "done"); }
+    const conn = $(`pconn-${i}`);
+    if (conn) conn.classList.remove("done");
+  }
+  pipeProgressFill.style.width = "0%";
+  pipeLogLine.textContent = "Starting…";
+}
+
+function animatePipeTracker(onDone) {
+  resetPipeTracker();
+  let step = 0;
+  const stepDuration = 320;
+
+  function advance() {
+    // Mark previous step done, connector done
+    if (step > 0) {
+      $(`pstep-${step - 1}`)?.classList.replace("active", "done");
+      $(`pconn-${step - 1}`)?.classList.add("done");
+    }
+    if (step >= 6) {
+      // All done
+      pipeProgressFill.style.width = "100%";
+      pipeLogLine.textContent = "Complete ✓";
+      onDone?.();
+      return;
+    }
+    // Activate current step
+    $(`pstep-${step}`)?.classList.add("active");
+    pipeLogLine.textContent = PIPE_LOGS[step] || "";
+    pipeProgressFill.style.width = `${Math.round(((step + 1) / 6) * 100)}%`;
+    step++;
+    _pipeTimer = setTimeout(advance, stepDuration);
+  }
+
+  advance();
+}
+
+function stopPipeTracker() {
+  clearTimeout(_pipeTimer);
+}
+
+// ── Inline AI insights ────────────────────────────────────────
+function renderAiInsightsInline(insights) {
+  if (!insights || !insights.summary) { aiInsightsInline.hidden = true; return; }
+  aiInlineSummary.textContent = insights.summary;
+  aiInlinePlan.innerHTML = (insights.plan || []).map((p) => `<li>${escapeHtml(p)}</li>`).join("");
+  aiInlineProvider.textContent = insights.provider === "manual-fallback" ? "fallback" : (insights.provider || "offline");
+  aiInlineProvider.className = `provider-badge ${insights.provider === "openai" ? "openai" : insights.provider === "gemini" ? "gemini" : "offline"}`;
+  aiInsightsInline.hidden = false;
+}
 
 // ── Utilities ────────────────────────────────────────────────
 const pct = (v) => `${(v * 100).toFixed(1)}%`;
@@ -99,6 +196,29 @@ if (!document.getElementById("_spin_style")) {
   document.head.appendChild(s);
 }
 
+// ── Provider helpers ─────────────────────────────────────────
+function detectProviderFromKey(key) {
+  if (!key) return "none";
+  if (key.startsWith("AIza")) return "gemini";
+  return "openai";
+}
+
+const OPENAI_MODELS = [
+  { value: "gpt-4o-mini",   label: "GPT-4o mini — fast, economical" },
+  { value: "gpt-4o",        label: "GPT-4o — most capable" },
+  { value: "gpt-4-turbo",   label: "GPT-4 Turbo" },
+];
+const GEMINI_MODELS = [
+  { value: "gemini-1.5-flash",      label: "Gemini 1.5 Flash — fast, free tier" },
+  { value: "gemini-1.5-pro",        label: "Gemini 1.5 Pro — most capable" },
+  { value: "gemini-2.0-flash",      label: "Gemini 2.0 Flash — latest" },
+  { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash-Lite — ultra-fast" },
+];
+
+function getDefaultModel(provider) {
+  return provider === "gemini" ? "gemini-1.5-flash" : "gpt-4o-mini";
+}
+
 // ── Settings ─────────────────────────────────────────────────
 function loadSettings() {
   try {
@@ -106,16 +226,34 @@ function loadSettings() {
     state.settings = { ...state.settings, ...saved };
   } catch {}
   updateChatKeyWarning();
+  syncProviderUI();
 }
 
 function persistSettings() {
   localStorage.setItem("qcai_settings", JSON.stringify(state.settings));
 }
 
+function syncProviderUI() {
+  const provider = detectProviderFromKey(state.settings.apiKey);
+  const isGemini = provider === "gemini";
+  document.getElementById("tabOpenAI")?.classList.toggle("provider-tab-active", !isGemini);
+  document.getElementById("tabGemini")?.classList.toggle("provider-tab-active", isGemini);
+  const label = document.getElementById("apiKeyLabel");
+  const hint = document.getElementById("apiKeyHint");
+  if (label) label.textContent = isGemini ? "Google Gemini API Key" : "OpenAI API Key";
+  if (hint) hint.innerHTML = isGemini
+    ? "Stored in your browser only. Paste your <strong>Google Gemini</strong> key (starts with <code>AIza</code>). Get one at <a href='https://aistudio.google.com/apikey' target='_blank' style='color:var(--cyan)'>aistudio.google.com</a>."
+    : "Stored in your browser only. Paste your <strong>OpenAI</strong> key (starts with <code>sk-</code>).";
+  const apiKeyInput = document.getElementById("apiKeyInput");
+  if (apiKeyInput) apiKeyInput.placeholder = isGemini ? "AIza…" : "sk-…";
+}
+
 function openSettings() {
+  const provider = detectProviderFromKey(state.settings.apiKey);
   apiKeyInput.value = state.settings.apiKey || "";
-  modelSelect.value = state.settings.model || "gpt-4o-mini";
+  modelSelect.value = state.settings.model || getDefaultModel(provider);
   autoRunChat.checked = state.settings.autoRunChat || false;
+  syncProviderUI();
   settingsModal.hidden = false;
 }
 
@@ -130,15 +268,49 @@ function saveSettings() {
   persistSettings();
   closeSettings();
   updateChatKeyWarning();
+  updateChatProviderBadge();
+  syncProviderUI();
   showToast("Settings saved", "success");
-  if (state.settings.apiKey) {
-    chatProviderBadge.textContent = "openai";
-    chatProviderBadge.className = "provider-badge openai";
-  }
 }
 
 function updateChatKeyWarning() {
   chatKeyWarning.hidden = !!state.settings.apiKey;
+}
+
+function updateChatProviderBadge() {
+  const provider = detectProviderFromKey(state.settings.apiKey);
+  if (provider !== "none") {
+    chatProviderBadge.textContent = provider;
+    chatProviderBadge.className = `provider-badge ${provider}`;
+  } else {
+    chatProviderBadge.textContent = "offline";
+    chatProviderBadge.className = "provider-badge offline";
+  }
+}
+
+// Provider tab click handlers (wired after DOM load)
+function initProviderTabs() {
+  document.querySelectorAll(".provider-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const isGemini = tab.dataset.provider === "gemini";
+      document.querySelectorAll(".provider-tab").forEach((t) => t.classList.remove("provider-tab-active"));
+      tab.classList.add("provider-tab-active");
+      // Update placeholder and hint
+      const apiKeyInput = document.getElementById("apiKeyInput");
+      const label = document.getElementById("apiKeyLabel");
+      const hint = document.getElementById("apiKeyHint");
+      if (apiKeyInput) apiKeyInput.placeholder = isGemini ? "AIza…" : "sk-…";
+      if (label) label.textContent = isGemini ? "Google Gemini API Key" : "OpenAI API Key";
+      if (hint) hint.innerHTML = isGemini
+        ? "Stored in your browser only. Paste your <strong>Google Gemini</strong> key (starts with <code>AIza</code>). Get one at <a href='https://aistudio.google.com/apikey' target='_blank' style='color:var(--cyan)'>aistudio.google.com</a>."
+        : "Stored in your browser only. Paste your <strong>OpenAI</strong> key (starts with <code>sk-</code>).";
+      // Suggest a default model for selected provider
+      const suggestedModel = getDefaultModel(tab.dataset.provider);
+      if (modelSelect && (!modelSelect.value || detectProviderFromKey(apiKeyInput?.value || "") !== tab.dataset.provider)) {
+        modelSelect.value = suggestedModel;
+      }
+    });
+  });
 }
 
 settingsBtn.addEventListener("click", openSettings);
@@ -214,13 +386,49 @@ async function fetchJson(url, options = {}) {
 async function loadReactions() {
   const reactions = await fetchJson("/api/reactions");
   reactionSelect.innerHTML = "";
+
+  // Group reactions by category
+  const groups = {
+    "gps-renewables": { label: "GPS Renewables — Biogas & Biomethane", reactions: [] },
+    "sustainable-fuels": { label: "Sustainable Fuels", reactions: [] },
+    "carbon-conversion": { label: "Carbon Conversion", reactions: [] },
+    "general": { label: "Other", reactions: [] },
+  };
+
   reactions.forEach((r) => {
-    const opt = document.createElement("option");
-    opt.value = r.id;
-    opt.textContent = r.name;
-    reactionSelect.appendChild(opt);
+    const cat = r.category || "general";
+    if (!groups[cat]) groups[cat] = { label: cat, reactions: [] };
+    groups[cat].reactions.push(r);
   });
-  state.currentReactionKey = reactions[0]?.id || null;
+
+  Object.values(groups).forEach((group) => {
+    if (!group.reactions.length) return;
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = group.label;
+    group.reactions.forEach((r) => {
+      const opt = document.createElement("option");
+      opt.value = r.id;
+      opt.textContent = r.name;
+      optgroup.appendChild(opt);
+    });
+    reactionSelect.appendChild(optgroup);
+  });
+
+  // Default to first GPS Renewables reaction so the biogas use-case is prominent
+  const gpsFirst = reactions.find((r) => r.category === "gps-renewables");
+  state.currentReactionKey = gpsFirst?.id || reactions[0]?.id || null;
+  if (state.currentReactionKey) {
+    reactionSelect.value = state.currentReactionKey;
+    updateConditions(state.currentReactionKey);
+  }
+
+  // Update conditions live when reaction changes
+  reactionSelect.addEventListener("change", () => {
+    updateConditions(reactionSelect.value);
+    aiInsightsInline.hidden = true;
+    resetPipeTracker();
+    pipeLogLine.textContent = "Awaiting run…";
+  });
 }
 
 // ── Render helpers ────────────────────────────────────────────
@@ -344,6 +552,11 @@ function renderUseCaseDecision(decision) {
 // ── Pipeline ─────────────────────────────────────────────────
 async function runPipeline() {
   state.currentReactionKey = reactionSelect.value;
+  updateConditions(state.currentReactionKey);
+
+  // Start tracker animation (it runs in parallel with the API call)
+  animatePipeTracker();
+
   const result = await fetchJson("/api/pipeline/run", {
     method: "POST",
     body: JSON.stringify({
@@ -354,6 +567,17 @@ async function runPipeline() {
     }),
   });
 
+  stopPipeTracker();
+  // Force all steps to done state
+  for (let i = 0; i < 6; i++) {
+    const s = $(`pstep-${i}`);
+    s?.classList.remove("active");
+    s?.classList.add("done");
+    $(`pconn-${i}`)?.classList.add("done");
+  }
+  pipeProgressFill.style.width = "100%";
+  pipeLogLine.textContent = "Complete ✓";
+
   const time = new Date(result.generatedAt).toLocaleTimeString();
   runMeta.textContent = `Run at ${time} · ${result.candidates?.length ?? 0} candidates · ${result.feedbackModel.roundsTrained} feedback rounds · AI: ${result.aiInsights.provider}`;
 
@@ -362,12 +586,19 @@ async function runPipeline() {
   renderUseCaseDecision(result.useCaseDecision);
   renderCandidates(result.candidates);
   renderModel(result.topRecommendation.xyz);
+  renderAiInsightsInline(result.aiInsights);
 
   // Build context string for AI chat
   const top3 = (result.candidates || []).slice(0, 3)
     .map((c) => `${c.id} (${c.family}, activity ${pct(c.scores.activity)}, selectivity ${pct(c.scores.selectivity)}, stability ${pct(c.scores.stability)}, total ${pct(c.scores.total)})`)
     .join("; ");
   state.pipelineContext = `Reaction: ${result.reaction.name}. Top 3 candidates: ${top3}. Recommended for use-case: ${result.useCaseDecision?.chosenCandidateId || "n/a"}.`;
+
+  // Update provider badge based on what the pipeline actually used
+  if (result.aiInsights.provider && result.aiInsights.provider !== "manual-fallback") {
+    chatProviderBadge.textContent = result.aiInsights.provider;
+    chatProviderBadge.className = `provider-badge ${result.aiInsights.provider}`;
+  }
 
   if (state.settings.autoRunChat && state.settings.apiKey && result.aiInsights.summary) {
     appendChatMessage("assistant", result.aiInsights.summary);
@@ -389,6 +620,9 @@ runBtn.addEventListener("click", async () => {
     await runPipeline();
     showToast("Pipeline complete", "success");
   } catch (err) {
+    stopPipeTracker();
+    pipeLogLine.textContent = `Error: ${err.message}`;
+    pipeProgressFill.style.background = "var(--red)";
     runMeta.textContent = `Error: ${err.message}`;
     setStatus("error", "Error");
     showToast(`Pipeline failed: ${err.message}`, "error");
@@ -497,8 +731,7 @@ function appendChatMessage(role, text) {
   if (role === "assistant") {
     state.chatMessages.push({ role: "assistant", content: text });
     chatSubtitle.textContent = "Response ready";
-    chatProviderBadge.textContent = state.settings.apiKey ? "openai" : "offline";
-    chatProviderBadge.className = `provider-badge ${state.settings.apiKey ? "openai" : "offline"}`;
+    updateChatProviderBadge();
   } else {
     state.chatMessages.push({ role: "user", content: text });
   }
@@ -553,9 +786,9 @@ async function sendChatMessage(text) {
     removeTypingIndicator();
     appendChatMessage("assistant", data.reply || "No response.");
 
-    if (data.provider === "openai") {
-      chatProviderBadge.textContent = "openai";
-      chatProviderBadge.className = "provider-badge openai";
+    if (data.provider && data.provider !== "none" && data.provider !== "error") {
+      chatProviderBadge.textContent = data.provider;
+      chatProviderBadge.className = `provider-badge ${data.provider}`;
     }
   } catch (err) {
     removeTypingIndicator();
@@ -592,6 +825,8 @@ chatInput.addEventListener("input", () => {
 // ── Init ─────────────────────────────────────────────────────
 async function init() {
   loadSettings();
+  initProviderTabs();
+  updateChatProviderBadge();
   initViewer();
 
   try {

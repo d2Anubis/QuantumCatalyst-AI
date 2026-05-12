@@ -44,6 +44,7 @@ let feedbackModel = { ...defaultFeedbackModel };
 const reactionTemplates = {
   "ethanol-to-jet": {
     name: "Ethanol to Jet Fuel",
+    category: "sustainable-fuels",
     desiredDescriptors: {
       activationEnergy: 0.35,
       adsorptionStrength: 0.72,
@@ -57,6 +58,7 @@ const reactionTemplates = {
   },
   "co2-to-methanol": {
     name: "CO2 to Methanol",
+    category: "carbon-conversion",
     desiredDescriptors: {
       activationEnergy: 0.28,
       adsorptionStrength: 0.67,
@@ -70,6 +72,7 @@ const reactionTemplates = {
   },
   "syngas-to-ethanol": {
     name: "Syngas to Ethanol",
+    category: "sustainable-fuels",
     desiredDescriptors: {
       activationEnergy: 0.32,
       adsorptionStrength: 0.64,
@@ -79,6 +82,83 @@ const reactionTemplates = {
       pathway: "CO/H2 -> Acetyl intermediates -> Ethanol",
       fluxRisk: "Medium at carbon monoxide dehydrogenase step",
       suggestedEdits: ["raise CODH activity", "balance redox via transhydrogenase"]
+    }
+  },
+  // ── GPS Renewables / Biogas reactions ────────────────────────
+  "biogas-upgrading": {
+    name: "Biogas Upgrading → Biomethane (GPS Renewables)",
+    category: "gps-renewables",
+    desiredDescriptors: {
+      activationEnergy: 0.22,
+      adsorptionStrength: 0.78,
+      electronCorrelation: 0.71
+    },
+    syntheticBioHints: {
+      pathway: "Raw Biogas (CH4 55–65% + CO2 35–45% + H2S traces) -> CO2/H2S adsorption -> Pipeline-quality Biomethane (>97% CH4)",
+      fluxRisk: "High at H2S poisoning of amine scrubbers; moderate at CO2 slip above 3%",
+      suggestedEdits: [
+        "optimize pressure-swing adsorption cycle time for CO2 selectivity",
+        "add ZnO guard bed upstream to protect amine solvents from H2S",
+        "tune regeneration temperature of solid sorbent to 120–140 °C",
+        "evaluate MOF-based membranes for CO2/CH4 separation at ambient pressure"
+      ]
+    }
+  },
+  "waste-to-biogas": {
+    name: "Organic Waste → Biogas (GPS Renewables)",
+    category: "gps-renewables",
+    desiredDescriptors: {
+      activationEnergy: 0.26,
+      adsorptionStrength: 0.58,
+      electronCorrelation: 0.68
+    },
+    syntheticBioHints: {
+      pathway: "Lignocellulosic / Agri Waste -> Hydrolysis -> Acidogenesis -> Acetogenesis -> Methanogenesis (CH4 + CO2)",
+      fluxRisk: "High at hydrolysis of lignocellulose; volatile fatty acid accumulation inhibits methanogens above 4 g/L",
+      suggestedEdits: [
+        "pre-treat feedstock with cellulase enzymes to improve hydrolysis rate",
+        "maintain C/N ratio 20–30 to prevent ammonia inhibition",
+        "add trace metal micronutrients (Co, Ni, Fe, Mo) for methanogen health",
+        "operate two-stage CSTR to decouple acidogenesis from methanogenesis"
+      ]
+    }
+  },
+  "biomethane-to-hydrogen": {
+    name: "Biomethane → Green Hydrogen (GPS Renewables)",
+    category: "gps-renewables",
+    desiredDescriptors: {
+      activationEnergy: 0.38,
+      adsorptionStrength: 0.66,
+      electronCorrelation: 0.84
+    },
+    syntheticBioHints: {
+      pathway: "Biomethane + H2O -> Steam Methane Reforming -> H2 + CO2 (with CCS for carbon-negative H2)",
+      fluxRisk: "High at Ni catalyst coking above 700 °C; moderate at CO2 recycling loop efficiency",
+      suggestedEdits: [
+        "promote Ni catalyst with CeO2 to suppress coke formation",
+        "use autothermal reforming at 850 °C to improve energy efficiency",
+        "integrate PSA unit downstream for 99.97% H2 purity",
+        "capture CO2 byproduct for GPS Renewables compressed biogas carbon credit"
+      ]
+    }
+  },
+  "biogas-co2-utilization": {
+    name: "Biogas CO2 → Synthetic Methane (GPS Renewables)",
+    category: "gps-renewables",
+    desiredDescriptors: {
+      activationEnergy: 0.24,
+      adsorptionStrength: 0.71,
+      electronCorrelation: 0.86
+    },
+    syntheticBioHints: {
+      pathway: "Captured CO2 from Biogas Upgrading + Renewable H2 -> Sabatier Reaction -> Synthetic CH4 (Power-to-Gas)",
+      fluxRisk: "Medium at H2 supply intermittency; thermal runaway risk in fixed-bed Sabatier reactor above 350 °C",
+      suggestedEdits: [
+        "use structured Ni/Al2O3 monolith catalyst for better heat management",
+        "integrate electrolyser output directly into Sabatier feed for real-time load balancing",
+        "monitor CO slip and adjust GHSV for >99% CO2 conversion",
+        "pair with GPS Renewables biogas plant CO2 capture stream for closed carbon loop"
+      ]
     }
   }
 };
@@ -175,18 +255,25 @@ function buildManualUseCaseDecision(candidates, useCaseText = "") {
   };
 }
 
-function openAiChatCompletion(messages, overrideApiKey, overrideModel) {
-  const apiKey = overrideApiKey || process.env.OPENAI_API_KEY;
-  const model = overrideModel || process.env.OPENAI_MODEL || "gpt-4o-mini";
-  if (!apiKey) {
-    return Promise.resolve(null);
-  }
+// ── Provider detection ────────────────────────────────────────
+function detectProvider(apiKey) {
+  if (!apiKey) return "none";
+  if (apiKey.startsWith("AIza")) return "gemini";
+  return "openai";
+}
 
-  const body = JSON.stringify({
-    model,
-    temperature: 0.2,
-    messages
-  });
+function resolveModel(provider, overrideModel) {
+  if (provider === "gemini") {
+    return overrideModel && overrideModel.startsWith("gemini")
+      ? overrideModel
+      : (process.env.GEMINI_MODEL || "gemini-1.5-flash");
+  }
+  return overrideModel || process.env.OPENAI_MODEL || "gpt-4o-mini";
+}
+
+// ── OpenAI completion ─────────────────────────────────────────
+function openAiChatCompletion(messages, apiKey, model) {
+  const body = JSON.stringify({ model, temperature: 0.2, messages });
 
   return new Promise((resolve, reject) => {
     const req = https.request(
@@ -202,28 +289,87 @@ function openAiChatCompletion(messages, overrideApiKey, overrideModel) {
       },
       (res) => {
         let data = "";
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
+        res.on("data", (chunk) => { data += chunk; });
         res.on("end", () => {
           if (res.statusCode < 200 || res.statusCode >= 300) {
-            return reject(new Error(`LLM request failed (${res.statusCode}): ${data}`));
+            return reject(new Error(`OpenAI request failed (${res.statusCode}): ${data}`));
           }
           try {
             const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.message?.content || "";
-            return resolve(content);
-          } catch (err) {
-            return reject(err);
-          }
+            return resolve(parsed.choices?.[0]?.message?.content || "");
+          } catch (err) { return reject(err); }
         });
       }
     );
-
     req.on("error", reject);
     req.write(body);
     req.end();
   });
+}
+
+// ── Gemini completion ─────────────────────────────────────────
+function geminiChatCompletion(messages, apiKey, model) {
+  // Split system message from conversation
+  const systemMsg = messages.find((m) => m.role === "system");
+  const convoMsgs = messages.filter((m) => m.role !== "system");
+
+  // Map OpenAI roles → Gemini roles
+  const contents = convoMsgs.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }]
+  }));
+
+  const requestBody = {
+    contents,
+    generationConfig: { temperature: 0.2 }
+  };
+
+  if (systemMsg) {
+    requestBody.system_instruction = { parts: [{ text: systemMsg.content }] };
+  }
+
+  const bodyStr = JSON.stringify(requestBody);
+  const path = `/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      {
+        hostname: "generativelanguage.googleapis.com",
+        path,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(bodyStr)
+        }
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => { data += chunk; });
+        res.on("end", () => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            return reject(new Error(`Gemini request failed (${res.statusCode}): ${data}`));
+          }
+          try {
+            const parsed = JSON.parse(data);
+            const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            return resolve(text);
+          } catch (err) { return reject(err); }
+        });
+      }
+    );
+    req.on("error", reject);
+    req.write(bodyStr);
+    req.end();
+  });
+}
+
+// ── Unified LLM call (OpenAI or Gemini) ──────────────────────
+function llmChatCompletion(messages, apiKey, overrideModel) {
+  const provider = detectProvider(apiKey);
+  if (provider === "none") return Promise.resolve(null);
+  const model = resolveModel(provider, overrideModel);
+  if (provider === "gemini") return geminiChatCompletion(messages, apiKey, model);
+  return openAiChatCompletion(messages, apiKey, model);
 }
 
 function buildFallbackAiInsights(pipelineResult, useCaseText, decision) {
@@ -248,10 +394,9 @@ function buildFallbackAiInsights(pipelineResult, useCaseText, decision) {
 
 async function buildAiInsights(pipelineResult, useCaseText, decision, overrideApiKey, overrideModel) {
   const fallback = buildFallbackAiInsights(pipelineResult, useCaseText, decision);
-  const key = overrideApiKey || process.env.OPENAI_API_KEY;
-  if (!key) {
-    return fallback;
-  }
+  const key = overrideApiKey || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
+  const provider = detectProvider(key);
+  if (provider === "none") return fallback;
 
   try {
     const topCandidates = pipelineResult.candidates.slice(0, 3).map((c) => ({
@@ -264,11 +409,11 @@ async function buildAiInsights(pipelineResult, useCaseText, decision, overrideAp
       total: Number(c.scores.total.toFixed(3))
     }));
 
-    const prompt = [
+    const messages = [
       {
         role: "system",
         content:
-          "You are a catalysis R&D copilot. Return strict JSON with keys: summary (string), plan (array of 3 short strings), caveats (array of 3 short strings), useCaseRationale (array of 2-4 short strings)."
+          "You are a catalysis R&D copilot. Return strict JSON with keys: summary (string), plan (array of 3 short strings), caveats (array of 3 short strings), useCaseRationale (array of 2-4 short strings). Do not include any text outside the JSON object."
       },
       {
         role: "user",
@@ -281,12 +426,14 @@ async function buildAiInsights(pipelineResult, useCaseText, decision, overrideAp
       }
     ];
 
-    const content = await openAiChatCompletion(prompt, overrideApiKey, overrideModel);
+    const content = await llmChatCompletion(messages, key, overrideModel);
     if (!content) return fallback;
 
-    const parsed = JSON.parse(content);
+    // Strip potential markdown code fences that some models add
+    const cleaned = content.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+    const parsed = JSON.parse(cleaned);
     return {
-      provider: "openai",
+      provider,
       summary: parsed.summary || fallback.summary,
       plan: Array.isArray(parsed.plan) ? parsed.plan.slice(0, 3) : fallback.plan,
       caveats: Array.isArray(parsed.caveats) ? parsed.caveats.slice(0, 3) : fallback.caveats,
@@ -398,9 +545,15 @@ app.get("/api/reactions", (req, res) => {
   res.json(
     Object.entries(reactionTemplates).map(([id, value]) => ({
       id,
-      name: value.name
+      name: value.name,
+      category: value.category || "general"
     }))
   );
+});
+
+app.get("/api/provider", (req, res) => {
+  const key = req.headers["x-api-key"] || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
+  res.json({ provider: detectProvider(key), hasKey: !!key });
 });
 
 app.post("/api/pipeline/run", async (req, res) => {
@@ -409,7 +562,7 @@ app.post("/api/pipeline/run", async (req, res) => {
     return res.status(400).json({ error: "Invalid reactionKey" });
   }
 
-  const clientKey = req.headers["x-api-key"] || apiKey;
+  const clientKey = req.headers["x-api-key"] || apiKey || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
   const clientModel = model;
 
   const result = pipelineRun(reactionKey);
@@ -476,19 +629,21 @@ app.get("/api/feedback/logs", (req, res) => {
 
 app.post("/api/chat", async (req, res) => {
   const { messages = [], context = "", model } = req.body;
-  const apiKey = req.headers["x-api-key"] || process.env.OPENAI_API_KEY;
+  const apiKey = req.headers["x-api-key"] || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
+  const provider = detectProvider(apiKey);
 
-  if (!apiKey) {
+  if (provider === "none") {
     return res.json({
-      reply: "No OpenAI API key configured. Add your key via the Settings panel (⚙) to enable AI chat. The pipeline still runs fully without it — AI chat and enhanced insights require a key.",
+      reply: "No AI API key configured. Add your OpenAI key (sk-…) or Google Gemini key (AIza…) via the Settings panel (⚙) to enable AI chat. The pipeline runs fully without it.",
       provider: "none"
     });
   }
 
   const systemContent =
-    "You are a catalysis R&D AI copilot for QuantumCatalyst AI. " +
+    "You are a catalysis R&D AI copilot for QuantumCatalyst AI, specialized in renewable energy and biogas applications for GPS Renewables and similar clients. " +
     "You help scientists understand catalyst discovery results, explain quantum simulation outputs (VQE, ground-state energies, energy barriers), " +
-    "suggest experimental strategies, interpret molecular properties, and provide concise, technically accurate guidance. " +
+    "suggest experimental strategies for biogas upgrading, biomethane production, CO2 conversion, and green hydrogen pathways, " +
+    "interpret molecular properties, and provide concise, technically accurate guidance. " +
     "Be direct and specific. Prefer bullet points for lists. " +
     (context ? `\n\nCurrent pipeline context:\n${context}` : "");
 
@@ -498,9 +653,9 @@ app.post("/api/chat", async (req, res) => {
   ];
 
   try {
-    const content = await openAiChatCompletion(allMessages, apiKey, model);
+    const content = await llmChatCompletion(allMessages, apiKey, model);
     if (!content) return res.json({ reply: "No response from AI model.", provider: "none" });
-    return res.json({ reply: content, provider: "openai" });
+    return res.json({ reply: content, provider });
   } catch (err) {
     return res.status(500).json({ reply: `AI error: ${err.message}`, provider: "error" });
   }
