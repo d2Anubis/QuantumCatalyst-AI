@@ -326,8 +326,9 @@ body {
 
 .control-grid {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(160px, auto) 1fr auto;
   gap: 12px;
+  align-items: end;
   align-items: end;
 }
 
@@ -1282,10 +1283,15 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 6px 10px;
   font-size: 11.5px;
 }
-.condition-chip-wide { flex: 1; min-width: 160px; }
+.condition-chip-wide { flex: 1; min-width: 0; overflow: hidden; }
 .condition-chip svg { opacity: 0.45; flex-shrink: 0; }
-.condition-label { color: var(--text-muted); white-space: nowrap; }
-.condition-value { color: var(--text); margin-left: 2px; font-size: 11.5px; font-family: var(--font-mono); white-space: nowrap; }
+.condition-label { color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+.condition-value {
+  color: var(--text); margin-left: 2px; font-size: 11.5px;
+  font-family: var(--font-mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-width: 0;
+}
 
 /* 6-step pipeline tracker */
 .pipeline-track {
@@ -1299,7 +1305,10 @@ tbody tr:last-child td { border-bottom: none; }
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.pipeline-steps::-webkit-scrollbar { display: none; }
 .pipe-step {
   display: flex;
   flex-direction: column;

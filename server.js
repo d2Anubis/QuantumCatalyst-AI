@@ -86,8 +86,8 @@ const reactionTemplates = {
   },
   // ── GPS Renewables / Biogas reactions ────────────────────────
   "biogas-upgrading": {
-    name: "Biogas Upgrading → Biomethane (GPS Renewables)",
-    category: "gps-renewables",
+    name: "Biogas Upgrading → Biomethane",
+    category: "biogas",
     desiredDescriptors: {
       activationEnergy: 0.22,
       adsorptionStrength: 0.78,
@@ -105,8 +105,8 @@ const reactionTemplates = {
     }
   },
   "waste-to-biogas": {
-    name: "Organic Waste → Biogas (GPS Renewables)",
-    category: "gps-renewables",
+    name: "Organic Waste → Biogas",
+    category: "biogas",
     desiredDescriptors: {
       activationEnergy: 0.26,
       adsorptionStrength: 0.58,
@@ -124,8 +124,8 @@ const reactionTemplates = {
     }
   },
   "biomethane-to-hydrogen": {
-    name: "Biomethane → Green Hydrogen (GPS Renewables)",
-    category: "gps-renewables",
+    name: "Biomethane → Green Hydrogen",
+    category: "biogas",
     desiredDescriptors: {
       activationEnergy: 0.38,
       adsorptionStrength: 0.66,
@@ -143,8 +143,8 @@ const reactionTemplates = {
     }
   },
   "biogas-co2-utilization": {
-    name: "Biogas CO2 → Synthetic Methane (GPS Renewables)",
-    category: "gps-renewables",
+    name: "Biogas CO₂ → Synthetic Methane",
+    category: "biogas",
     desiredDescriptors: {
       activationEnergy: 0.24,
       adsorptionStrength: 0.71,
@@ -640,7 +640,7 @@ app.post("/api/chat", async (req, res) => {
   }
 
   const systemContent =
-    "You are a catalysis R&D AI copilot for QuantumCatalyst AI, specialized in renewable energy and biogas applications for GPS Renewables and similar clients. " +
+    "You are a catalysis R&D AI copilot for QuantumCatalyst AI, specialised in sustainable chemistry, biogas, and renewable energy applications. " +
     "You help scientists understand catalyst discovery results, explain quantum simulation outputs (VQE, ground-state energies, energy barriers), " +
     "suggest experimental strategies for biogas upgrading, biomethane production, CO2 conversion, and green hydrogen pathways, " +
     "interpret molecular properties, and provide concise, technically accurate guidance. " +

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
     <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
   </head>
   <body>
@@ -202,10 +202,10 @@
       <section id="discover" class="section">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Discovery Snapshot</h2>
-            <p class="section-subtitle">Live metrics from the latest pipeline run</p>
+            <h2 class="section-title">Top Candidate — Key Metrics</h2>
+            <p class="section-subtitle">Scores for the #1 ranked catalyst from the pipeline run above</p>
           </div>
-          <span class="section-tag">Real-time</span>
+          <span class="section-tag">From pipeline run</span>
         </div>
         <div class="kpi-grid">
           <article class="kpi-card glass-card">
@@ -328,8 +328,8 @@
       <section id="candidates" class="section">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Ranked Candidates</h2>
-            <p class="section-subtitle">All candidates sorted by composite score</p>
+            <h2 class="section-title">All Candidates — Ranked</h2>
+            <p class="section-subtitle">Database + generative candidates, sorted by composite score from the pipeline run above</p>
           </div>
           <span class="count-badge" id="candidateCount">0 candidates</span>
         </div>
@@ -425,7 +425,7 @@
           <span>QuantumCatalyst AI</span>
           <span class="footer-version">v1.0 Research Preview</span>
         </div>
-        <p class="footer-note">Powered by VQE simulation · Generative AI (OpenAI + Gemini) · GPS Renewables Biogas Pipeline · Continuous experimental learning</p>
+        <p class="footer-note">Powered by VQE simulation · Generative AI (OpenAI + Gemini) · Continuous experimental learning</p>
       </div>
     </footer>
 
@@ -573,6 +573,6 @@
     <!-- Toast container -->
     <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-    <script src="app.js"></script>
+    <script src="/app.js"></script>
   </body>
 </html>

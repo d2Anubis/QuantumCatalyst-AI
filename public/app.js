@@ -389,10 +389,10 @@ async function loadReactions() {
 
   // Group reactions by category
   const groups = {
-    "gps-renewables": { label: "GPS Renewables — Biogas & Biomethane", reactions: [] },
+    "biogas":            { label: "Biogas & Biomethane", reactions: [] },
     "sustainable-fuels": { label: "Sustainable Fuels", reactions: [] },
     "carbon-conversion": { label: "Carbon Conversion", reactions: [] },
-    "general": { label: "Other", reactions: [] },
+    "general":           { label: "Other", reactions: [] },
   };
 
   reactions.forEach((r) => {
@@ -414,9 +414,9 @@ async function loadReactions() {
     reactionSelect.appendChild(optgroup);
   });
 
-  // Default to first GPS Renewables reaction so the biogas use-case is prominent
-  const gpsFirst = reactions.find((r) => r.category === "gps-renewables");
-  state.currentReactionKey = gpsFirst?.id || reactions[0]?.id || null;
+  // Default to first biogas reaction
+  const biogasFirst = reactions.find((r) => r.category === "biogas");
+  state.currentReactionKey = biogasFirst?.id || reactions[0]?.id || null;
   if (state.currentReactionKey) {
     reactionSelect.value = state.currentReactionKey;
     updateConditions(state.currentReactionKey);

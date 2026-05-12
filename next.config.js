@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",          // generates a static `out/` folder
+  // Remove static export — API routes and the /app route handler need server runtime
   images: { unoptimized: true },
-  trailingSlash: true,       // /about → /about/index.html — cleaner for static hosting
 };
 
 module.exports = nextConfig;
