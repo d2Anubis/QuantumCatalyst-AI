@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove static export — API routes and the /app route handler need server runtime
+  output: "export",          // generates a static `out/` folder for Vercel
   images: { unoptimized: true },
+  trailingSlash: true,       // /about → /about/index.html — cleaner for static hosting
 };
 
 module.exports = nextConfig;
