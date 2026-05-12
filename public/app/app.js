@@ -394,7 +394,15 @@ async function fetchJson(url, options = {}) {
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || `HTTP ${res.status}`);
+    const t = text.trim();
+    const looksHtml = t.startsWith("<!DOCTYPE") || t.startsWith("<html") || t.includes('"__next"');
+    if (looksHtml) {
+      throw new Error(
+        `API error (${res.status}): expected JSON but got an HTML page (often a 404). ` +
+          "On Vercel, /api must be deployed as serverless functions—see api/ in the repo."
+      );
+    }
+    throw new Error(text.slice(0, 240) || `HTTP ${res.status}`);
   }
   return res.json();
 }

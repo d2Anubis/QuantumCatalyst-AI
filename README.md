@@ -213,12 +213,21 @@ QuantumCatalyst AI/
 ├── data/
 │   ├── catalysts.json      # Seeded catalyst database (11 entries incl. 6 GPS-specific)
 │   └── experiment_logs.json # Created at runtime
-├── server.js               # Express backend — pipeline, APIs, dual-provider LLM routing
+├── lib/
+│   ├── backend.cjs         # Shared REST pipeline logic (Express + Vercel)
+│   ├── vercel-bridge.cjs   # Connects Vercel handlers to the same /api router
+│   └── utils.js            # cn() for marketing UI
+├── api/                      # Vercel serverless endpoints (mirror /api/* routes)
+│   ├── reactions.js
+│   ├── pipeline/run.js
+│   └── ...
+├── server.js               # Express — static + /api (local dev parity with Vercel)
+├── vercel.json             # Bundle data/catalysts.json with api/** functions
 ├── next.config.js          # Next.js static export config
 └── package.json
 ```
 
-**Vercel:** The site uses `output: "export"` (`out/`). The platform UI lives in `public/app/` so the build copies it to `out/app/` and `/app/` is served as static files. The REST API is implemented in `server.js` and is **not** included in that static bundle; for a live demo with pipeline + feedback, run Express locally or deploy the Node server (e.g. Railway, Render).
+**Vercel:** The site uses `output: "export"` (`out/`). The platform UI lives in `public/app/` so the build copies it to `out/app/` and `/app/` works as static HTML. **REST APIs** are implemented in **`lib/backend.cjs`** and exposed for production through **root `api/**/*.js` serverless wrappers** (same routes as local Express). `vercel.json` ensures `data/catalysts.json` is bundled with those functions. Experiment logs on Vercel are written to the function temp directory (not durable across cold starts). For a long‑lived single process, use `npm start` (Express).
 
 ---
 
