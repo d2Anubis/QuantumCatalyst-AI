@@ -310,6 +310,30 @@ Upgrade the chat interface to accept:
 
 ---
 
+## New features added (demo-ready)
+
+### Confidence Scoring
+Every candidate in the ranked table now displays a **VQE Prediction Confidence** badge (High / Medium / Low) derived from the quantum simulation's internal reliability score. High ≥ 82%, Medium 70–81%, Low < 70%. This directly exposes prediction uncertainty — the mark of a real scientific platform vs a toy demo.
+
+### Synthesis Feasibility
+A second column shows **Synthesis Feasibility** (Readily synthesisable / Moderate / Complex) based on whether the candidate is a known database material or a novel generative variant. Signals engineering maturity: best catalyst on paper ≠ most practical catalyst to pilot.
+
+### Hypothesis "Why?" Button
+Every row in the candidates table has a **"Why?" button**. Clicking it opens the AI Copilot and fires a pre-built scientific reasoning prompt: *"Explain the structural and chemical factors driving [Candidate ID]'s scores, identify the root cause of its weakest metric, and suggest the most important thing to monitor in the first 72 hours of bench testing."* This is the AI Hypothesis Engine — demonstrating that the platform explains, not just predicts.
+
+### Scientific Memory Panel
+The Experiment Log card is upgraded to a **Scientific Memory** panel. After each feedback round, it shows:
+- How many experiments the model has learned from
+- The current learned corrections per dimension (activity / selectivity / stability) with ± values
+- Whether the model has been pushed positive or negative by real lab data
+
+This makes the closed-loop learning architecture *visible* — the core differentiator.
+
+### Prediction Delta on Feedback Submission
+After submitting a lab result, the UI displays a **Predicted → Measured** delta table per dimension (e.g. Activity: 88.9% → 91.0% (+2.1%)). This makes the feedback loop tangible for judges watching the demo.
+
+---
+
 ## 10-minute pitch structure
 
 This platform was designed to be demoed, not just described. Here is a suggested flow that maps to the product sections:
@@ -319,11 +343,12 @@ This platform was designed to be demoed, not just described. Here is a suggested
 | 0:00–1:00 | Landing page (`/`) — 3D rotating catalyst lattice | "This is the OS for catalyst discovery. The 3D structure is real — it's a Cu-Zn alloy we'll rank in 30 seconds." |
 | 1:00–2:00 | Open the app (`/app`) — point to Pipeline Control card | "Here's the cockpit. Select a GPS Renewables reaction — Biogas Upgrading. Watch the conditions auto-fill: 25°C, 5–10 bar, raw biogas with 2% H₂S." |
 | 2:00–3:30 | Hit Run Discovery — watch the 6-step tracker animate | "Retrieval — Quantum simulation — Generative design — Ranking. All of that in under a second. In a real lab, this is 6–18 months." |
-| 3:30–4:30 | Scroll to KPI dashboard + Candidates table | "GPS-001 — K₂CO₃-Alumina — 96% selectivity. This is the sorbent that doesn't get poisoned by H₂S. The AI just ranked 9 candidates against that constraint." |
-| 4:30–5:30 | Load a candidate in 3D viewer | "This is the actual molecular geometry. You can rotate it, switch to sphere mode, inspect the active site." |
+| 3:30–4:30 | Scroll to KPI dashboard + Candidates table | "GPS-001 — K₂CO₃-Alumina — 96% selectivity. Confidence: High. Feasibility: Readily synthesisable. The AI ranked 9 candidates and tells you exactly how sure it is about each one." |
+| 4:30–5:00 | Click “Why?” on the second-ranked candidate | "This is the Hypothesis Engine. The AI explains the structural reason this candidate underperforms on stability — and suggests what to change. Not just prediction. Scientific reasoning." |
+| 5:00–5:30 | Load GPS-001 in 3D viewer | "This is the actual molecular geometry. Rotate it, switch to sphere mode, inspect the active site." |
 | 5:30–6:30 | Scroll to AI Copilot inline summary | "The AI already wrote the experiment plan. Three steps: which candidates to bench-screen first, what to track at 24h and 72h, and what to feed back into the model." |
-| 6:30–7:30 | Open AI Copilot chat → ask "Why is GPS-001 better than GPS-003 for H₂S removal?" | "This works with a Gemini key — free tier. Every GPS Renewables engineer gets a PhD-level copilot in their pocket." |
-| 7:30–8:30 | Submit a feedback result (0.91 yield, 0.97 selectivity) | "Round 1 done. The model just updated its bias. Next run will be more accurate. This is the learning loop." |
+| 6:30–7:00 | Open AI Copilot chat → ask a follow-up question | "This works with a Gemini key — free tier. Every GPS Renewables engineer gets a PhD-level copilot in their pocket." |
+| 7:00–8:30 | Submit a feedback result (0.91 yield, 0.97 selectivity) and point to delta + Scientific Memory | "Predicted 88.9% activity — lab measured 91.0%. The model sees that +2.1% error and corrects itself permanently. The Scientific Memory panel shows the learned correction being applied to every future run. This is the loop closing in real time." |
 | 8:30–9:30 | Switch reaction to Biomethane → Green Hydrogen — run again | "Same platform, different reaction. Ni-CeO₂ surfaces as the top reforming catalyst. Four GPS Renewables reactions. One interface." |
 | 9:30–10:00 | Back to landing page pricing section | "Research is free. Pro is $490/month with your own API key. Enterprise for on-prem GPS Renewables deployment with SCADA integration." |
 

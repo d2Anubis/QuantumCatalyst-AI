@@ -40,6 +40,18 @@ const PIPE_LOGS  = [
   "Updating feedback model…",
 ];
 
+// ── Confidence / Feasibility helpers ─────────────────────────
+const CONFIDENCE_META = {
+  high:   { label: "High",     cls: "conf-high",   title: "VQE prediction reliability ≥ 82% — use with confidence" },
+  medium: { label: "Medium",   cls: "conf-medium",  title: "VQE prediction reliability 70–81% — validate key metrics" },
+  low:    { label: "Low",      cls: "conf-low",    title: "VQE prediction reliability < 70% — experimental screening recommended" },
+};
+const FEASIBILITY_META = {
+  high:   { label: "Readily synth.", cls: "feas-high",   title: "Known precursors, established synthesis route" },
+  medium: { label: "Moderate",       cls: "feas-medium",  title: "Novel variant of known family — synthesis feasible with lab effort" },
+  low:    { label: "Complex",        cls: "feas-low",    title: "Highly novel — significant synthesis development required" },
+};
+
 // ── DOM refs ─────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
 const reactionSelect   = $("reactionSelect");
@@ -58,6 +70,11 @@ const kpiStability     = $("kpiStability");
 const feedbackForm     = $("feedbackForm");
 const feedbackMsg      = $("feedbackMsg");
 const feedbackLogs     = $("feedbackLogs");
+const modelIntelligence= $("modelIntelligence");
+const memoryRounds     = $("memoryRounds");
+const biasActivity     = $("biasActivity");
+const biasSelectivity  = $("biasSelectivity");
+const biasStability    = $("biasStability");
 const statusBadge      = $("statusBadge");
 const statusText       = statusBadge.querySelector(".status-text");
 const chatPanel        = $("chatPanel");
@@ -490,15 +507,20 @@ function renderCandidates(candidates) {
   candidateCount.textContent = `${candidates.length} candidates`;
 
   if (!candidates.length) {
-    candidateRows.innerHTML = `<tr><td colspan="8" class="table-empty">No candidates found</td></tr>`;
+    candidateRows.innerHTML = `<tr><td colspan="10" class="table-empty">No candidates found</td></tr>`;
     return;
   }
 
-  candidateRows.innerHTML = candidates.map((c, i) => `
+  candidateRows.innerHTML = candidates.map((c, i) => {
+    const conf = CONFIDENCE_META[c.confidenceTier] || CONFIDENCE_META.medium;
+    const feas = FEASIBILITY_META[c.feasibilityTier] || FEASIBILITY_META.medium;
+    return `
     <tr>
       <td><span style="font-family:var(--font-mono);font-size:12.5px;color:var(--text)">${c.id}</span></td>
       <td style="color:var(--text);font-weight:500">${c.name}</td>
       <td><span class="source-chip source-${c.source}">${c.source}</span></td>
+      <td><span class="tier-badge ${conf.cls}" title="${conf.title}">${conf.label}</span></td>
+      <td><span class="tier-badge ${feas.cls}" title="${feas.title}">${feas.label}</span></td>
       <td>
         <div class="score-bar">
           <div class="score-bar-track"><div class="score-bar-fill" style="width:${c.scores.activity*100}%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
@@ -518,9 +540,12 @@ function renderCandidates(candidates) {
         </div>
       </td>
       <td><span class="total-score">${pct(c.scores.total)}</span>${i === 0 ? ' <span style="font-size:10px;background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.25);color:var(--cyan);padding:1px 6px;border-radius:99px;margin-left:4px">Top</span>' : ""}</td>
-      <td><button class="btn-view" data-id="${c.id}">Load 3D</button></td>
-    </tr>
-  `).join("");
+      <td class="action-cell">
+        <button class="btn-view" data-id="${c.id}">Load 3D</button>
+        <button class="btn-why" data-id="${c.id}" title="AI Hypothesis: explain this candidate's performance">Why?</button>
+      </td>
+    </tr>`;
+  }).join("");
 
   document.querySelectorAll(".btn-view").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -533,6 +558,28 @@ function renderCandidates(candidates) {
       }
     });
   });
+
+  document.querySelectorAll(".btn-why").forEach((btn) => {
+    btn.addEventListener("click", () => explainCandidate(btn.dataset.id));
+  });
+}
+
+function explainCandidate(candidateId) {
+  const c = state.currentCandidates.find((x) => x.id === candidateId);
+  if (!c) return;
+  const reactionName = reactionSelect.options[reactionSelect.selectedIndex]?.text || state.currentReactionKey;
+  const conf = CONFIDENCE_META[c.confidenceTier] || CONFIDENCE_META.medium;
+  const feas = FEASIBILITY_META[c.feasibilityTier] || FEASIBILITY_META.medium;
+  const prompt =
+    `Explain the scientific reasoning behind ${c.id} (${c.name}, ${c.family} family) for the reaction: ${reactionName}.\n` +
+    `Scores — Activity: ${pct(c.scores.activity)}, Selectivity: ${pct(c.scores.selectivity)}, Stability: ${pct(c.scores.stability)}, Total: ${pct(c.scores.total)}.\n` +
+    `VQE prediction confidence: ${conf.label}. Synthesis feasibility: ${feas.label}.\n\n` +
+    `Please answer: (1) What structural or chemical factors most likely drive its strongest metric? ` +
+    `(2) What is the likely cause of its weakest metric, and what experimental modification would address it? ` +
+    `(3) What is the most important thing to monitor in the first 72 hours of bench testing?`;
+  if (!state.chatOpen) toggleChat(true);
+  setTimeout(() => sendChatMessage(prompt), 80);
+  showToast(`Opening AI hypothesis for ${candidateId}`, "info");
 }
 
 function renderUseCaseDecision(decision) {
@@ -587,6 +634,7 @@ async function runPipeline() {
   renderCandidates(result.candidates);
   renderModel(result.topRecommendation.xyz);
   renderAiInsightsInline(result.aiInsights);
+  renderMemoryPanel(result.feedbackModel);
 
   // Build context string for AI chat
   const top3 = (result.candidates || []).slice(0, 3)
@@ -648,6 +696,62 @@ async function refreshLogs() {
   `).join("");
 }
 
+function formatBias(value) {
+  const pctVal = (value * 100).toFixed(1);
+  if (value > 0.001)  return { text: `+${pctVal}%`, cls: "bias-positive" };
+  if (value < -0.001) return { text: `${pctVal}%`,  cls: "bias-negative" };
+  return { text: `±0.0%`, cls: "bias-neutral" };
+}
+
+function renderMemoryPanel(fm) {
+  if (!fm || fm.roundsTrained === 0) return;
+  modelIntelligence.hidden = false;
+  memoryRounds.textContent = fm.roundsTrained;
+
+  const bA = formatBias(fm.activityBias);
+  const bS = formatBias(fm.selectivityBias);
+  const bSt = formatBias(fm.stabilityBias);
+
+  biasActivity.textContent    = bA.text;
+  biasActivity.className      = `bias-value ${bA.cls}`;
+  biasSelectivity.textContent = bS.text;
+  biasSelectivity.className   = `bias-value ${bS.cls}`;
+  biasStability.textContent   = bSt.text;
+  biasStability.className     = `bias-value ${bSt.cls}`;
+}
+
+function renderPredictionDelta(delta) {
+  if (!delta) return "";
+  const fmt = (d) => {
+    const v = (d * 100).toFixed(1);
+    return d >= 0 ? `<span class="delta-pos">+${v}%</span>` : `<span class="delta-neg">${v}%</span>`;
+  };
+  return `
+    <div class="delta-table">
+      <div class="delta-row">
+        <span class="delta-label">Activity</span>
+        <span class="delta-predicted">${(delta.activity.predicted * 100).toFixed(1)}%</span>
+        <span class="delta-arrow">→</span>
+        <span class="delta-measured">${(delta.activity.measured * 100).toFixed(1)}%</span>
+        <span class="delta-diff">${fmt(delta.activity.delta)}</span>
+      </div>
+      <div class="delta-row">
+        <span class="delta-label">Selectivity</span>
+        <span class="delta-predicted">${(delta.selectivity.predicted * 100).toFixed(1)}%</span>
+        <span class="delta-arrow">→</span>
+        <span class="delta-measured">${(delta.selectivity.measured * 100).toFixed(1)}%</span>
+        <span class="delta-diff">${fmt(delta.selectivity.delta)}</span>
+      </div>
+      <div class="delta-row">
+        <span class="delta-label">Stability</span>
+        <span class="delta-predicted">${(delta.stability.predicted * 100).toFixed(1)}%</span>
+        <span class="delta-arrow">→</span>
+        <span class="delta-measured">${(delta.stability.measured * 100).toFixed(1)}%</span>
+        <span class="delta-diff">${fmt(delta.stability.delta)}</span>
+      </div>
+    </div>`;
+}
+
 feedbackForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   feedbackMsg.textContent = "Submitting…";
@@ -664,8 +768,13 @@ feedbackForm.addEventListener("submit", async (e) => {
       method: "POST",
       body: JSON.stringify(payload),
     });
-    feedbackMsg.textContent = `Feedback ingested · ${result.feedbackModel.roundsTrained} total training rounds`;
+    feedbackMsg.innerHTML = `
+      <span class="feedback-success-line">Feedback ingested · Model updated · ${result.feedbackModel.roundsTrained} training rounds</span>
+      <span class="feedback-delta-label">Prediction vs measured:</span>
+      ${renderPredictionDelta(result.predictionDelta)}
+    `;
     feedbackMsg.className = "feedback-msg success";
+    renderMemoryPanel(result.feedbackModel);
     showToast("Feedback submitted — model updated", "success");
     await runPipeline();
     await refreshLogs();

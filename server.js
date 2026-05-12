@@ -40,6 +40,7 @@ const defaultFeedbackModel = {
 };
 
 let feedbackModel = { ...defaultFeedbackModel };
+let biasHistory = [];
 
 const reactionTemplates = {
   "ethanol-to-jet": {
@@ -185,6 +186,18 @@ function clamp01(v) {
 
 function clampSigned(v, min = -0.5, max = 0.5) {
   return Math.max(min, Math.min(max, v));
+}
+
+function getConfidenceTier(confidence) {
+  if (confidence >= 0.82) return "high";
+  if (confidence >= 0.70) return "medium";
+  return "low";
+}
+
+function getFeasibilityTier(candidate) {
+  if (candidate.source === "database") return "high";
+  if ((candidate.noveltyScore || 0) >= 0.88) return "low";
+  return "medium";
 }
 
 function deterministicNoise(seedString) {
@@ -527,7 +540,13 @@ function pipelineRun(reactionKey) {
 
   const allCandidates = [...topKnown, ...generated].map((c) => {
     const scores = scoreCandidate(c, reactionKey, c.vqe);
-    return { ...c, scores };
+    return {
+      ...c,
+      scores,
+      confidenceTier: getConfidenceTier(c.vqe.confidence),
+      vqeConfidence: c.vqe.confidence,
+      feasibilityTier: getFeasibilityTier(c)
+    };
   });
 
   allCandidates.sort((a, b) => b.scores.total - a.scores.total);
@@ -604,6 +623,34 @@ app.post("/api/feedback", (req, res) => {
     roundsTrained: feedbackModel.roundsTrained + 1
   };
 
+  biasHistory.push({
+    round: feedbackModel.roundsTrained,
+    timestamp: new Date().toISOString(),
+    candidateId,
+    activityBias: feedbackModel.activityBias,
+    selectivityBias: feedbackModel.selectivityBias,
+    stabilityBias: feedbackModel.stabilityBias
+  });
+  if (biasHistory.length > 50) biasHistory.shift();
+
+  const predictionDelta = {
+    activity: {
+      predicted: predicted.scores.activity,
+      measured: measuredYield,
+      delta: deltaYield
+    },
+    selectivity: {
+      predicted: predicted.scores.selectivity,
+      measured: measuredSelectivity,
+      delta: deltaSelectivity
+    },
+    stability: {
+      predicted: predicted.scores.stability,
+      measured: measuredStability,
+      delta: deltaStability
+    }
+  };
+
   const logs = readJson(experimentLogPath, []);
   logs.push({
     timestamp: new Date().toISOString(),
@@ -612,13 +659,16 @@ app.post("/api/feedback", (req, res) => {
     measuredYield,
     measuredSelectivity,
     measuredStability,
-    predictionBeforeFeedback: predicted.scores
+    predictionBeforeFeedback: predicted.scores,
+    predictionDelta
   });
   writeJson(experimentLogPath, logs);
 
   return res.json({
     message: "Feedback ingested and lightweight model updated.",
-    feedbackModel
+    feedbackModel,
+    predictionDelta,
+    biasHistory: biasHistory.slice(-5)
   });
 });
 
@@ -659,6 +709,16 @@ app.post("/api/chat", async (req, res) => {
   } catch (err) {
     return res.status(500).json({ reply: `AI error: ${err.message}`, provider: "error" });
   }
+});
+
+app.get("/api/memory", (req, res) => {
+  const logs = readJson(experimentLogPath, []);
+  res.json({
+    feedbackModel,
+    biasHistory: biasHistory.slice(-10),
+    totalExperiments: feedbackModel.roundsTrained,
+    recentLogs: logs.slice(-5).reverse()
+  });
 });
 
 app.get("/api/health", (req, res) => {

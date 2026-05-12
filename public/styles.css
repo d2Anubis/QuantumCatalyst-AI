@@ -1499,3 +1499,142 @@ tbody tr:last-child td { border-bottom: none; }
 
 /* Reaction group header styling */
 select optgroup { font-weight: 700; color: var(--text-soft); }
+
+/* ── 19. Confidence & Feasibility tier badges ─────────────────── */
+.tier-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* Confidence */
+.conf-high   { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.28); color: #34d399; }
+.conf-medium { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.28); color: #fbbf24; }
+.conf-low    { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.28); color: #f87171; }
+
+/* Feasibility */
+.feas-high   { background: rgba(34,211,238,0.10); border: 1px solid rgba(34,211,238,0.25); color: #22d3ee; }
+.feas-medium { background: rgba(139,92,246,0.10); border: 1px solid rgba(139,92,246,0.25); color: #a78bfa; }
+.feas-low    { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.25); color: #f87171; }
+
+/* ── 20. Action cell (Load 3D + Why? buttons) ─────────────────── */
+.action-cell { display: flex; gap: 5px; align-items: center; }
+.btn-why {
+  padding: 4px 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(139,92,246,0.3);
+  background: rgba(139,92,246,0.10);
+  color: #a78bfa;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.btn-why:hover {
+  background: rgba(139,92,246,0.20);
+  border-color: rgba(139,92,246,0.5);
+  color: #c4b5fd;
+}
+
+/* ── 21. Scientific Memory panel ──────────────────────────────── */
+.model-intelligence {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: rgba(16,185,129,0.05);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: var(--radius-sm);
+}
+
+.memory-headline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-soft);
+  margin-bottom: 12px;
+}
+.memory-headline strong { color: #34d399; }
+
+.bias-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.bias-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+}
+.bias-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.bias-value {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.bias-positive { color: #34d399; }
+.bias-negative { color: #f87171; }
+.bias-neutral  { color: var(--text-muted); }
+
+.memory-caption {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── 22. Prediction Delta display ─────────────────────────────── */
+.feedback-success-line {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.feedback-delta-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.delta-table {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.delta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+.delta-label {
+  width: 72px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+.delta-predicted { color: var(--text-soft); }
+.delta-arrow     { color: var(--text-muted); }
+.delta-measured  { color: var(--text); font-weight: 600; }
+.delta-diff      { margin-left: 2px; font-weight: 700; }
+.delta-pos       { color: #34d399; }
+.delta-neg       { color: #f87171; }

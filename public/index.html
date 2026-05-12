@@ -341,16 +341,18 @@
                   <th>ID</th>
                   <th>Name</th>
                   <th>Source</th>
+                  <th>Confidence</th>
+                  <th>Feasibility</th>
                   <th>Activity</th>
                   <th>Selectivity</th>
                   <th>Stability</th>
                   <th>Total Score</th>
-                  <th>Action</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="candidateRows">
                 <tr>
-                  <td colspan="8" class="table-empty">Run the pipeline to load candidates</td>
+                  <td colspan="10" class="table-empty">Run the pipeline to load candidates</td>
                 </tr>
               </tbody>
             </table>
@@ -372,7 +374,8 @@
         <div class="feedback-grid">
           <article class="glass-card">
             <div class="card-header">
-              <span class="card-title">Submit Experiment Result</span>
+              <span class="card-title">Submit Lab Result</span>
+              <span class="card-tag">Closes the loop</span>
             </div>
             <form id="feedbackForm" class="feedback-form">
               <div class="form-row-5">
@@ -403,9 +406,33 @@
 
           <article class="glass-card">
             <div class="card-header">
-              <span class="card-title">Experiment Log</span>
+              <span class="card-title">Scientific Memory</span>
               <span class="count-badge" id="logCount">0 runs</span>
             </div>
+
+            <!-- Model intelligence summary (shown after first feedback) -->
+            <div id="modelIntelligence" class="model-intelligence" hidden>
+              <p class="memory-headline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Model has learned from <strong id="memoryRounds">0</strong> experiments
+              </p>
+              <div class="bias-grid">
+                <div class="bias-item">
+                  <span class="bias-label">Activity correction</span>
+                  <span id="biasActivity" class="bias-value bias-neutral">±0.0%</span>
+                </div>
+                <div class="bias-item">
+                  <span class="bias-label">Selectivity correction</span>
+                  <span id="biasSelectivity" class="bias-value bias-neutral">±0.0%</span>
+                </div>
+                <div class="bias-item">
+                  <span class="bias-label">Stability correction</span>
+                  <span id="biasStability" class="bias-value bias-neutral">±0.0%</span>
+                </div>
+              </div>
+              <p class="memory-caption">Corrections applied to all future predictions from lab-measured deltas</p>
+            </div>
+
             <ul id="feedbackLogs" class="log-list">
               <li class="log-empty">No experiments logged yet</li>
             </ul>

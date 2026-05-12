@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuantumCatalyst AI — GPS Renewables Hackathon Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:      #020812;
+      --surface: #060d1a;
+      --card:    rgba(10,20,38,0.80);
+      --blue:    #3b82f6;
+      --cyan:    #22d3ee;
+      --violet:  #8b5cf6;
+      --emerald: #10b981;
+      --amber:   #f59e0b;
+      --red:     #f87171;
+      --text:    #e2e8f0;
+      --soft:    #94a3b8;
+      --muted:   #4b637a;
+      --sans:    'Inter', sans-serif;
+      --display: 'Space Grotesk', sans-serif;
+      --mono:    'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 15px; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 10% 0%, rgba(59,130,246,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 15%, rgba(139,92,246,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 60% at 50% 100%, rgba(34,211,238,0.07) 0%, transparent 60%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 72px 80px;
+      border-bottom: 1px solid rgba(59,130,246,0.08);
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    @media (max-width: 768px) { .slide { padding: 48px 28px; } }
+
+    .slide-num {
+      position: absolute;
+      top: 32px;
+      right: 40px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Type ── */
+    .eyebrow {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    p { line-height: 1.65; color: var(--soft); }
+
+    .grad { background: linear-gradient(135deg, var(--cyan), var(--violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .lead {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--soft);
+      max-width: 760px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(59,130,246,0.14);
+      border-radius: 16px;
+      padding: 24px 26px;
+      box-shadow: 0 4px 24px rgba(2,8,18,0.55);
+    }
+
+    /* ── Grid helpers ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .badge-cyan    { background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.28); color: var(--cyan); }
+    .badge-violet  { background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.28); color: #a78bfa; }
+    .badge-emerald { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.28); color: #34d399; }
+    .badge-amber   { background: rgba(245,158,11,0.12);  border: 1px solid rgba(245,158,11,0.28);  color: #fbbf24; }
+    .badge-red     { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.28); color: var(--red); }
+
+    /* ── Quote block ── */
+    .quote-block {
+      border-left: 3px solid var(--cyan);
+      padding: 16px 22px;
+      background: rgba(34,211,238,0.04);
+      border-radius: 0 12px 12px 0;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.65;
+      margin: 20px 0;
+    }
+
+    /* ── Pipeline diagram ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 32px 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .pipe-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .pipe-dot {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(34,211,238,0.12);
+      border: 2px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .pipe-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--soft);
+      text-align: center;
+      max-width: 70px;
+    }
+    .pipe-arrow {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), rgba(139,92,246,0.6));
+      flex-shrink: 0;
+      position: relative;
+    }
+    .pipe-arrow::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: -4px;
+      border: 5px solid transparent;
+      border-left-color: #a78bfa;
+    }
+
+    /* ── Feature highlight ── */
+    .feature-card {
+      background: rgba(10,20,38,0.70);
+      border: 1px solid rgba(59,130,246,0.14);
+      border-radius: 14px;
+      padding: 20px 22px;
+      transition: border-color 200ms ease;
+    }
+    .feature-card:hover { border-color: rgba(34,211,238,0.3); }
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .icon-cyan    { background: rgba(34,211,238,0.12); }
+    .icon-violet  { background: rgba(139,92,246,0.12); }
+    .icon-emerald { background: rgba(16,185,129,0.12); }
+    .icon-amber   { background: rgba(245,158,11,0.12); }
+    .icon-blue    { background: rgba(59,130,246,0.12); }
+
+    .feature-card h3 { font-size: 1rem; }
+    .feature-card p  { font-size: 0.88rem; margin-top: 6px; }
+
+    /* ── Demo table ── */
+    .demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 20px;
+    }
+    .demo-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(59,130,246,0.14);
+    }
+    .demo-table td {
+      padding: 12px 16px;
+      color: var(--soft);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: top;
+    }
+    .demo-table td:first-child {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+    .demo-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+
+    /* ── Score bar ── */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .score-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-fill { height: 100%; border-radius: 3px; }
+    .score-val { font-family: var(--mono); font-size: 11.5px; color: var(--text); font-weight: 600; min-width: 40px; text-align: right; }
+
+    /* ── Comparison table ── */
+    .vs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+    }
+    .vs-table th {
+      padding: 12px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .vs-table th:first-child { text-align: left; color: var(--muted); }
+    .vs-table th.our { color: var(--cyan); }
+    .vs-table th.others { color: var(--muted); }
+    .vs-table td {
+      padding: 11px 20px;
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .vs-table td:first-child { color: var(--soft); }
+    .vs-table td:nth-child(2) { text-align: center; color: #34d399; font-weight: 700; }
+    .vs-table td:nth-child(3) { text-align: center; color: var(--muted); }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(34,211,238,0.2), transparent); margin: 32px 0; }
+
+    /* ── Closing slide ── */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 40px;
+    }
+    .closing-stat h2 {
+      font-family: var(--mono);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: -0.04em;
+      margin-bottom: 4px;
+    }
+    .closing-stat p { font-size: 0.88rem; }
+
+    /* ── Nav dots ── */
+    .nav-hint {
+      text-align: center;
+      padding: 20px;
+      font-size: 11.5px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      border-top: 1px solid rgba(59,130,246,0.08);
+    }
+
+    /* ── Hex brand ── */
+    .hex-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .hex-brand span {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .hex-brand span em { color: var(--cyan); font-style: normal; }
+
+    /* ── Code block ── */
+    .code-block {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--soft);
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .code-block .c-cyan   { color: var(--cyan); }
+    .code-block .c-violet { color: #a78bfa; }
+    .code-block .c-emerald{ color: #34d399; }
+    .code-block .c-amber  { color: #fbbf24; }
+    .code-block .c-muted  { color: var(--muted); }
+
+    /* ── Two-col text ── */
+    .two-col { columns: 2; column-gap: 40px; }
+    @media (max-width: 700px) { .two-col { columns: 1; } }
+
+    ul.bullet-list { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+    ul.bullet-list li { color: var(--soft); font-size: 0.93rem; line-height: 1.55; }
+    ul.bullet-list li strong { color: var(--text); }
+
+    /* ── New feature tag ── */
+    .new-tag {
+      display: inline-block;
+      padding: 1px 7px;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #34d399;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Separator line between slides ── */
+    .slide + .slide::before {
+      content: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 1 — TITLE                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide" style="min-height:100vh; justify-content:center;">
+  <span class="slide-num">01 / 12</span>
+
+  <div class="hex-brand">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L21.196 7V17L12 22L2.804 17V7L12 2Z" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M12 7L17 10V16L12 19L7 16V10L12 7Z" fill="#22d3ee" fill-opacity="0.18" stroke="#22d3ee" stroke-width="1"/>
+    </svg>
+    <span>QuantumCatalyst <em>AI</em></span>
+  </div>
+
+  <p class="eyebrow">GPS Renewables × Industrial R&amp;D Accelerator</p>
+  <h1>The Operating System<br>for <span class="grad">Catalyst Discovery</span></h1>
+  <p class="lead">
+    A continuously learning AI-native scientific discovery platform that compresses
+    6–18 months of catalyst screening into a single pipeline run — built specifically
+    for GPS Renewables' biogas, biomethane, and green hydrogen challenges.
+  </p>
+
+  <div style="margin-top:36px; display:flex; flex-wrap:wrap; gap:10px;">
+    <span class="badge badge-cyan">Quantum Energy Profiling</span>
+    <span class="badge badge-violet">Generative AI Design</span>
+    <span class="badge badge-emerald">Closed-Loop Learning</span>
+    <span class="badge badge-amber">AI Hypothesis Engine</span>
+  </div>
+
+  <div style="margin-top:48px; padding-top:24px; border-top:1px solid rgba(59,130,246,0.12); display:flex; gap:40px; flex-wrap:wrap;">
+    <div>
+      <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:4px;">Live Demo</p>
+      <p style="font-family:var(--mono); font-size:13px; color:var(--cyan);">quantum-catalyst-ai.vercel.app</p>
+    </div>
+    <div>
+      <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:4px;">Repository</p>
+      <p style="font-family:var(--mono); font-size:13px; color:var(--cyan);">github.com/d2Anubis/QuantumCatalyst-AI</p>
+    </div>
+    <div>
+      <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:4px;">Built by</p>
+      <p style="font-family:var(--mono); font-size:13px; color:var(--text);">d2Anubis</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 2 — THE PROBLEM                                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">02 / 12</span>
+  <p class="eyebrow">The Industrial Problem</p>
+  <h2>Catalyst discovery is broken at industrial scale</h2>
+
+  <div class="grid-2" style="margin-top:32px;">
+    <div>
+      <p class="lead" style="font-size:1rem; margin-bottom:20px;">
+        GPS Renewables operates biogas plants converting organic waste into CBG, biomethane,
+        and green hydrogen. Their bottleneck is catalytic:
+      </p>
+      <ul class="bullet-list">
+        <li><strong>6–18 months</strong> per lead catalyst in traditional high-throughput screening</li>
+        <li><strong>DFT errors</strong> in transition-metal systems — exactly where the best catalysts live</li>
+        <li><strong>Broken feedback loop</strong> — lab results never reach the computational model</li>
+        <li><strong>No reasoning layer</strong> — engineers get scores, not explanations</li>
+        <li><strong>Fragmented institutional knowledge</strong> — every failed experiment is lost</li>
+      </ul>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div class="card" style="border-color:rgba(248,113,113,0.2);">
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--red); margin-bottom:6px; font-weight:700;">GPS Renewables — Biogas Upgrading</p>
+        <p style="font-size:13px;">H₂S poisons amine solvents. No rapid sorbent replacement screening tool exists.</p>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,0.2);">
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--red); margin-bottom:6px; font-weight:700;">Biomethane → Green Hydrogen</p>
+        <p style="font-size:13px;">Ni-based SMR catalysts coke above 750°C. Better promoters are needed at scale.</p>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,0.2);">
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--red); margin-bottom:6px; font-weight:700;">Sabatier CO₂ Methanation</p>
+        <p style="font-size:13px;">Ni/Al₂O₃ thermal management unsolved at scale. Runaway risk in fixed-bed reactors.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top:32px;">
+    The real bottleneck in catalyst discovery is not lack of data — it's the inability to efficiently convert experimental outcomes into continuously improving scientific intelligence.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 3 — THE SOLUTION                                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">03 / 12</span>
+  <p class="eyebrow">Our Solution</p>
+  <h2>An AI-native scientific discovery<br>operating system</h2>
+
+  <p class="lead" style="margin-bottom:32px;">
+    QuantumCatalyst AI combines quantum energy profiling, generative candidate design,
+    and a closed-loop learning architecture into a single platform any GPS Renewables
+    engineer can operate — no quantum chemistry PhD required.
+  </p>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:rgba(34,211,238,0.2);">
+      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--cyan); margin-bottom:8px;">Layer 1</p>
+      <h3>Quantum Energy Profiling</h3>
+      <p style="font-size:13px; margin-top:8px;">VQE-inspired simulation evaluates transition-metal catalyst descriptors with higher electron-correlation fidelity than classical DFT. Drop-in replaceable with real IBM Quantum / AWS Braket backend — zero UI changes.</p>
+    </div>
+    <div class="card" style="border-color:rgba(139,92,246,0.2);">
+      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#a78bfa; margin-bottom:8px;">Layer 2</p>
+      <h3>Generative AI Design</h3>
+      <p style="font-size:13px; margin-top:8px;">Diffusion-inspired generative step proposes 6 novel alloy variants per run by mutating top performers in the latent descriptor space — exploring beyond the known chemical space.</p>
+    </div>
+    <div class="card" style="border-color:rgba(16,185,129,0.2);">
+      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#34d399; margin-bottom:8px;">Layer 3</p>
+      <h3>Continuous Learning</h3>
+      <p style="font-size:13px; margin-top:8px;">Bayesian bias-update loop learns from every lab result submitted. Each experiment shifts activity, selectivity, and stability predictions closer to reality — permanently.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 4 — 6-STEP PIPELINE                                 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">04 / 12</span>
+  <p class="eyebrow">Core Architecture</p>
+  <h2>The 6-step discovery pipeline</h2>
+  <p style="color:var(--soft); margin-bottom:32px;">From reaction selection to ranked, ready-to-test candidates in under one second.</p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-dot">01</div>
+      <span class="pipe-label">Reaction Input</span>
+    </div>
+    <div class="pipe-arrow"></div>
+    <div class="pipe-step">
+      <div class="pipe-dot">02</div>
+      <span class="pipe-label">Database Retrieval</span>
+    </div>
+    <div class="pipe-arrow"></div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="background:rgba(139,92,246,0.15); border-color:var(--violet); color:#a78bfa;">03</div>
+      <span class="pipe-label">VQE Simulation</span>
+    </div>
+    <div class="pipe-arrow"></div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="background:rgba(245,158,11,0.12); border-color:var(--amber); color:#fbbf24;">04</div>
+      <span class="pipe-label">Generative Design</span>
+    </div>
+    <div class="pipe-arrow"></div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="background:rgba(59,130,246,0.12); border-color:var(--blue); color:var(--blue);">05</div>
+      <span class="pipe-label">Multi-objective Ranking</span>
+    </div>
+    <div class="pipe-arrow"></div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="background:rgba(16,185,129,0.12); border-color:var(--emerald); color:#34d399;">06</div>
+      <span class="pipe-label">Experimental Feedback</span>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:24px;">
+    <div>
+      <ul class="bullet-list">
+        <li><strong>Step 1–2:</strong> Engineer selects GPS Renewables reaction (Biogas Upgrading, SMR, Sabatier, Waste-to-Biogas). Conditions auto-populate from seeded reaction templates.</li>
+        <li><strong>Step 3:</strong> VQE energy profiler computes ground-state energies, activation barriers (C–C formation, H-transfer, O-removal), and per-candidate confidence scores.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="bullet-list">
+        <li><strong>Step 4:</strong> Top database catalysts seed a generative step — 6 novel alloy variants per run, with novelty scores tracking how far they deviate from known space.</li>
+        <li><strong>Step 5–6:</strong> Pareto ranking across activity / selectivity / stability. Lab results feed back into the model via online Bayesian bias update — each run is smarter.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 5 — GPS RENEWABLES REACTIONS                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">05 / 12</span>
+  <p class="eyebrow">GPS Renewables — Built-in Reaction Templates</p>
+  <h2>Four operational reactions.<br>Pre-seeded. Ready on day one.</h2>
+
+  <div class="grid-2" style="margin-top:32px;">
+    <div class="feature-card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="badge badge-emerald">Biogas</span>
+        <span style="font-family:var(--mono); font-size:11px; color:var(--muted);">biogas-upgrading</span>
+      </div>
+      <h3>Biogas Upgrading → Biomethane</h3>
+      <p style="font-size:13px; margin-top:8px;">25–40°C, 5–10 bar. Raw biogas (CH₄ 60%, CO₂ 38%, H₂S 2%). Top seeded candidate: K₂CO₃-Alumina Sorbent (GPS-001).</p>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px;">
+        <div class="score-bar"><span style="font-size:11px; width:80px; color:var(--muted);">Selectivity</span><div class="score-track"><div class="score-fill" style="width:97%; background:linear-gradient(90deg,#8b5cf6,#a78bfa);"></div></div><span class="score-val">97.1%</span></div>
+        <div class="score-bar"><span style="font-size:11px; width:80px; color:var(--muted);">Activity</span><div class="score-track"><div class="score-fill" style="width:96%; background:linear-gradient(90deg,#3b82f6,#22d3ee);"></div></div><span class="score-val">96.3%</span></div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="badge badge-cyan">Hydrogen</span>
+        <span style="font-family:var(--mono); font-size:11px; color:var(--muted);">biomethane-to-hydrogen</span>
+      </div>
+      <h3>Biomethane → Green Hydrogen</h3>
+      <p style="font-size:13px; margin-top:8px;">800–900°C, 20–30 bar. Biomethane (97% CH₄). Top: Ni-CeO₂ Reforming Catalyst (GPS-002). Suppresses Ni coking above 750°C.</p>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px;">
+        <div class="score-bar"><span style="font-size:11px; width:80px; color:var(--muted);">Activity</span><div class="score-track"><div class="score-fill" style="width:89%; background:linear-gradient(90deg,#3b82f6,#22d3ee);"></div></div><span class="score-val">89.4%</span></div>
+        <div class="score-bar"><span style="font-size:11px; width:80px; color:var(--muted);">Stability</span><div class="score-track"><div class="score-fill" style="width:74%; background:linear-gradient(90deg,#10b981,#34d399);"></div></div><span class="score-val">74.1%</span></div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="badge badge-amber">Methanation</span>
+        <span style="font-family:var(--mono); font-size:11px; color:var(--muted);">biogas-co2-utilization</span>
+      </div>
+      <h3>Biogas CO₂ → Synthetic Methane</h3>
+      <p style="font-size:13px; margin-top:8px;">280–350°C, 5–20 bar. CO₂ + Renewable H₂ (4:1). Ni-Al₂O₃ Methanation (GPS-004). Addresses thermal runaway in fixed-bed Sabatier.</p>
+    </div>
+
+    <div class="feature-card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="badge badge-violet">Waste</span>
+        <span style="font-family:var(--mono); font-size:11px; color:var(--muted);">waste-to-biogas</span>
+      </div>
+      <h3>Organic Waste → Biogas</h3>
+      <p style="font-size:13px; margin-top:8px;">35–37°C, 1 atm. Agri / organic waste. Ru-Zeolite Methanogen Support (GPS-006). Addresses lignocellulose hydrolysis rate-limiting step.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 6 — NEW FEATURES (this session)                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">06 / 12</span>
+  <p class="eyebrow">New Features — Added This Sprint</p>
+  <h2>Five features that make the<br>science <span class="grad">visible</span></h2>
+
+  <div class="grid-3" style="margin-top:32px;">
+
+    <div class="feature-card" style="border-color:rgba(16,185,129,0.25);">
+      <div class="feature-icon icon-emerald">📊</div>
+      <h3>Confidence Scoring <span class="new-tag">new</span></h3>
+      <p>Every candidate shows a <strong style="color:#34d399;">High / Medium / Low</strong> VQE prediction confidence badge. The platform exposes uncertainty — exactly what real scientific AI must do.</p>
+      <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+        <span class="badge badge-emerald" style="font-size:10px;">High ≥ 82%</span>
+        <span class="badge badge-amber" style="font-size:10px;">Medium 70–81%</span>
+        <span class="badge badge-red" style="font-size:10px;">Low &lt; 70%</span>
+      </div>
+    </div>
+
+    <div class="feature-card" style="border-color:rgba(139,92,246,0.25);">
+      <div class="feature-icon icon-violet">🧠</div>
+      <h3>Hypothesis Engine <span class="new-tag">new</span></h3>
+      <p>Every candidate row has a <strong style="color:#a78bfa;">"Why?"</strong> button. Clicking it fires a pre-built scientific reasoning prompt to the AI copilot: structural factors, root cause of weakest metric, what to monitor in 72h.</p>
+    </div>
+
+    <div class="feature-card" style="border-color:rgba(34,211,238,0.25);">
+      <div class="feature-icon icon-cyan">🧬</div>
+      <h3>Scientific Memory <span class="new-tag">new</span></h3>
+      <p>The experiment log is upgraded to a <strong style="color:var(--cyan);">Scientific Memory</strong> panel showing learned corrections per dimension (Activity / Selectivity / Stability). Every experiment becomes institutional intelligence.</p>
+    </div>
+
+    <div class="feature-card" style="border-color:rgba(59,130,246,0.25);">
+      <div class="feature-icon icon-blue">⚗️</div>
+      <h3>Synthesis Feasibility <span class="new-tag">new</span></h3>
+      <p>A second column shows <strong style="color:#60a5fa;">Readily synth. / Moderate / Complex</strong>. Best catalyst ≠ most practical. This demonstrates real engineering maturity.</p>
+    </div>
+
+    <div class="feature-card" style="border-color:rgba(245,158,11,0.25);">
+      <div class="feature-icon icon-amber">📈</div>
+      <h3>Prediction Delta <span class="new-tag">new</span></h3>
+      <p>After every lab result submission, the UI shows a <strong style="color:#fbbf24;">Predicted → Measured</strong> delta table per dimension — making the learning loop tangible, not just described.</p>
+      <div class="code-block" style="margin-top:10px; font-size:11px;">
+        <span class="c-muted">Activity</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-soft">88.9%</span> → <span class="c-emerald">91.0%</span> <span class="c-emerald">(+2.1%)</span>
+      </div>
+    </div>
+
+    <div class="feature-card" style="border-color:rgba(16,185,129,0.15);">
+      <div class="feature-icon icon-emerald">🔗</div>
+      <h3>/api/memory Endpoint <span class="new-tag">new</span></h3>
+      <p>New API endpoint returns full model bias history, rounds trained, and recent experiment logs — making the scientific memory queryable from external systems and dashboards.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 7 — WHAT JUDGES WILL SEE                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">07 / 12</span>
+  <p class="eyebrow">What the Candidates Table Now Shows</p>
+  <h2>Scientific rigor, visible at a glance</h2>
+
+  <div class="card" style="margin-top:28px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(59,130,246,0.14);">
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">ID</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">Name</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">Source</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#34d399; font-weight:700;">Confidence ✦</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#60a5fa; font-weight:700;">Feasibility ✦</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">Activity</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">Total</th>
+          <th style="text-align:left; padding:10px 14px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#a78bfa; font-weight:700;">Actions ✦</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+          <td style="padding:12px 14px; font-family:var(--mono); font-size:12px; color:var(--cyan);">GPS-001</td>
+          <td style="padding:12px 14px; color:var(--text); font-weight:500;">K₂CO₃-Alumina Sorbent</td>
+          <td style="padding:12px 14px;"><span class="badge badge-cyan" style="font-size:10px;">database</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-emerald" style="font-size:10.5px;">High</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-cyan" style="font-size:10.5px;">Readily synth.</span></td>
+          <td style="padding:12px 14px; font-family:var(--mono); color:var(--cyan);">96.3%</td>
+          <td style="padding:12px 14px; font-family:var(--mono); font-weight:700; color:var(--text);">90.8% <span style="font-size:10px; background:rgba(34,211,238,0.12); border:1px solid rgba(34,211,238,0.25); color:var(--cyan); padding:1px 6px; border-radius:99px; margin-left:4px;">Top</span></td>
+          <td style="padding:12px 14px; display:flex; gap:6px;">
+            <span style="padding:3px 8px; border-radius:6px; border:1px solid rgba(34,211,238,0.25); font-size:11px; color:var(--cyan);">Load 3D</span>
+            <span style="padding:3px 9px; border-radius:6px; border:1px solid rgba(139,92,246,0.3); font-size:11px; color:#a78bfa; background:rgba(139,92,246,0.10);">Why?</span>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.04); opacity:0.8;">
+          <td style="padding:12px 14px; font-family:var(--mono); font-size:12px; color:var(--cyan);">GEN-bu-4</td>
+          <td style="padding:12px 14px; color:var(--text); font-weight:500;">K₂CO₃ Alloy Variant 4</td>
+          <td style="padding:12px 14px;"><span class="badge badge-violet" style="font-size:10px;">generative</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-emerald" style="font-size:10.5px;">High</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-violet" style="font-size:10.5px;">Moderate</span></td>
+          <td style="padding:12px 14px; font-family:var(--mono); color:var(--cyan);">91.2%</td>
+          <td style="padding:12px 14px; font-family:var(--mono); font-weight:700; color:var(--soft);">86.1%</td>
+          <td style="padding:12px 14px; display:flex; gap:6px;">
+            <span style="padding:3px 8px; border-radius:6px; border:1px solid rgba(34,211,238,0.25); font-size:11px; color:var(--cyan);">Load 3D</span>
+            <span style="padding:3px 9px; border-radius:6px; border:1px solid rgba(139,92,246,0.3); font-size:11px; color:#a78bfa; background:rgba(139,92,246,0.10);">Why?</span>
+          </td>
+        </tr>
+        <tr style="opacity:0.65;">
+          <td style="padding:12px 14px; font-family:var(--mono); font-size:12px; color:var(--cyan);">GPS-003</td>
+          <td style="padding:12px 14px; color:var(--text); font-weight:500;">ZnO Desulphurisation Guard</td>
+          <td style="padding:12px 14px;"><span class="badge badge-cyan" style="font-size:10px;">database</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-amber" style="font-size:10.5px;">Medium</span></td>
+          <td style="padding:12px 14px;"><span class="badge badge-cyan" style="font-size:10.5px;">Readily synth.</span></td>
+          <td style="padding:12px 14px; font-family:var(--mono); color:var(--cyan);">78.4%</td>
+          <td style="padding:12px 14px; font-family:var(--mono); font-weight:700; color:var(--soft);">73.2%</td>
+          <td style="padding:12px 14px; display:flex; gap:6px;">
+            <span style="padding:3px 8px; border-radius:6px; border:1px solid rgba(34,211,238,0.25); font-size:11px; color:var(--cyan);">Load 3D</span>
+            <span style="padding:3px 9px; border-radius:6px; border:1px solid rgba(139,92,246,0.3); font-size:11px; color:#a78bfa; background:rgba(139,92,246,0.10);">Why?</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px; color:var(--muted); margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.04);">✦ New columns added in this sprint — Confidence, Feasibility, Hypothesis button</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 8 — SCIENTIFIC MEMORY                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">08 / 12</span>
+  <p class="eyebrow">Scientific Memory — Closed-Loop Learning Made Visible</p>
+  <h2>Every experiment becomes<br>institutional intelligence</h2>
+
+  <div class="grid-2" style="margin-top:32px; align-items:start;">
+    <div>
+      <p style="color:var(--soft); margin-bottom:20px; line-height:1.7;">
+        Most research knowledge today is fragmented across notebooks, spreadsheets, and individual researchers.
+        Our platform transforms every experiment — successful or failed — into reusable scientific intelligence
+        that continuously improves future discovery cycles.
+      </p>
+      <ul class="bullet-list">
+        <li>Model tracks <strong>per-dimension bias corrections</strong> — activity, selectivity, and stability are adjusted independently</li>
+        <li>Each feedback round stores a timestamped bias snapshot — full <strong>model evolution history</strong></li>
+        <li>Corrections are applied to <strong>all future pipeline runs</strong> automatically</li>
+        <li>The <code style="font-family:var(--mono); font-size:12px; color:var(--cyan);">/api/memory</code> endpoint exposes the full model state for external dashboards</li>
+      </ul>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="card" style="border-color:rgba(16,185,129,0.2);">
+        <p style="font-size:11.5px; color:#34d399; font-weight:700; margin-bottom:12px;">
+          ✓ Model has learned from 3 experiments
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px; text-align:center;">
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:4px;">Activity</p>
+            <p style="font-family:var(--mono); font-size:14px; font-weight:700; color:#34d399;">+1.8%</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px; text-align:center;">
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:4px;">Selectivity</p>
+            <p style="font-family:var(--mono); font-size:14px; font-weight:700; color:#34d399;">+0.5%</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px; text-align:center;">
+            <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:4px;">Stability</p>
+            <p style="font-family:var(--mono); font-size:14px; font-weight:700; color:#f87171;">−0.3%</p>
+          </div>
+        </div>
+        <p style="font-size:11px; color:var(--muted); margin-top:8px; font-style:italic;">Corrections applied to all future predictions</p>
+      </div>
+
+      <div class="card">
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:10px; font-weight:700;">Prediction Delta — GPS-001 after bench test</p>
+        <div style="display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:12.5px;">
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="width:72px; font-size:11px; color:var(--muted); font-family:var(--sans); font-weight:600;">Activity</span>
+            <span style="color:var(--soft);">88.9%</span>
+            <span style="color:var(--muted);">→</span>
+            <span style="color:var(--text); font-weight:700;">91.0%</span>
+            <span style="color:#34d399; font-weight:700;">(+2.1%)</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="width:72px; font-size:11px; color:var(--muted); font-family:var(--sans); font-weight:600;">Selectivity</span>
+            <span style="color:var(--soft);">79.4%</span>
+            <span style="color:var(--muted);">→</span>
+            <span style="color:var(--text); font-weight:700;">97.0%</span>
+            <span style="color:#34d399; font-weight:700;">(+17.6%)</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="width:72px; font-size:11px; color:var(--muted); font-family:var(--sans); font-weight:600;">Stability</span>
+            <span style="color:var(--soft);">73.1%</span>
+            <span style="color:var(--muted);">→</span>
+            <span style="color:var(--text); font-weight:700;">88.0%</span>
+            <span style="color:#34d399; font-weight:700;">(+14.9%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 9 — VS OTHER TEAMS                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">09 / 12</span>
+  <p class="eyebrow">Competitive Positioning</p>
+  <h2>What sets this apart from<br>every other submission</h2>
+
+  <table class="vs-table">
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th class="our">QuantumCatalyst AI</th>
+        <th class="others">Most other teams</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Feedback loop that actually updates the model</td>
+        <td>✓ Bayesian bias update per dimension</td>
+        <td>✗ One-shot prediction only</td>
+      </tr>
+      <tr>
+        <td>Exposes prediction uncertainty</td>
+        <td>✓ High / Medium / Low confidence per candidate</td>
+        <td>✗ Single score, no uncertainty</td>
+      </tr>
+      <tr>
+        <td>Explains why a candidate performs the way it does</td>
+        <td>✓ Hypothesis Engine — AI reasoning on demand</td>
+        <td>✗ No explanation layer</td>
+      </tr>
+      <tr>
+        <td>Accounts for synthesis practicality</td>
+        <td>✓ Feasibility column — best ≠ most pilotable</td>
+        <td>✗ Ignores real-world synthesis cost</td>
+      </tr>
+      <tr>
+        <td>Scientific memory across experiments</td>
+        <td>✓ Per-dimension bias history, prediction delta display</td>
+        <td>✗ No memory, no provenance</td>
+      </tr>
+      <tr>
+        <td>GPS Renewables specific reactions</td>
+        <td>✓ 4 pre-seeded reactions, 6 GPS-specific catalysts</td>
+        <td>✗ Generic chemistry demo</td>
+      </tr>
+      <tr>
+        <td>Human-in-the-loop design</td>
+        <td>✓ AI accelerates — humans decide on final experiments</td>
+        <td>✗ Claims autonomous science</td>
+      </tr>
+      <tr>
+        <td>Works without any API key</td>
+        <td>✓ Deterministic fallback engine always runs</td>
+        <td>✗ Breaks without cloud API</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 10 — 10-MINUTE DEMO SCRIPT                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">10 / 12</span>
+  <p class="eyebrow">Demo Flow</p>
+  <h2>10-minute pitch script</h2>
+
+  <table class="demo-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Action</th>
+        <th>Line to land</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0:00–1:00</td>
+        <td>Landing page — 3D rotating catalyst lattice</td>
+        <td>"This is the OS for catalyst discovery. That 3D structure is a Cu-Zn alloy we'll rank in 30 seconds."</td>
+      </tr>
+      <tr>
+        <td>1:00–2:00</td>
+        <td>Open /app — Pipeline Control card</td>
+        <td>"Here's the cockpit. Select Biogas Upgrading. Conditions auto-populate: 25°C, 5–10 bar, raw biogas with 2% H₂S."</td>
+      </tr>
+      <tr>
+        <td>2:00–3:30</td>
+        <td>Hit Run Discovery — 6-step tracker animates</td>
+        <td>"Retrieval — Quantum simulation — Generative design — Ranking. Under a second. In a real lab: 6–18 months."</td>
+      </tr>
+      <tr>
+        <td>3:30–4:30</td>
+        <td>Scroll to Candidates table</td>
+        <td>"GPS-001, 96% selectivity. Confidence: High. Feasibility: Readily synthesisable. The AI ranks 9 candidates AND tells you how sure it is about each one."</td>
+      </tr>
+      <tr>
+        <td>4:30–5:00</td>
+        <td>Click "Why?" on GPS-003</td>
+        <td>"This is the Hypothesis Engine. The AI just explained the structural reason GPS-003 underperforms on stability — and told you what to fix. Not just a score. Scientific reasoning."</td>
+      </tr>
+      <tr>
+        <td>5:00–5:30</td>
+        <td>Load GPS-001 in 3D viewer</td>
+        <td>"Rotate it. Switch to sphere mode. This is the active site — the exact coordination geometry your engineers need to understand."</td>
+      </tr>
+      <tr>
+        <td>5:30–6:30</td>
+        <td>Scroll to AI Copilot inline summary</td>
+        <td>"The AI already wrote the experiment plan. Three prioritised steps. Your engineers open this platform and know exactly what to do next."</td>
+      </tr>
+      <tr>
+        <td>6:30–7:00</td>
+        <td>Open AI Copilot chat — live Q&amp;A</td>
+        <td>"Ask it anything. Free Gemini key. Every GPS Renewables field engineer gets a PhD-level copilot."</td>
+      </tr>
+      <tr>
+        <td>7:00–8:30</td>
+        <td>Submit lab result → show delta + Scientific Memory</td>
+        <td>"Predicted 88.9% — lab measured 91.0%. The model sees that error and corrects itself. The Scientific Memory panel shows the learned correction applied to every future run. The loop is closing."</td>
+      </tr>
+      <tr>
+        <td>8:30–9:30</td>
+        <td>Switch to Biomethane → Green Hydrogen — run again</td>
+        <td>"Same platform. Different reaction. Ni-CeO₂ surfaces top. Four GPS Renewables reactions. One interface."</td>
+      </tr>
+      <tr>
+        <td>9:30–10:00</td>
+        <td>Back to landing page — pricing</td>
+        <td>"Research: free. Pro: $490/month with your API key. Enterprise: on-prem GPS Renewables deployment with SCADA integration."</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 11 — TECH STACK + ARCHITECTURE                      -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">11 / 12</span>
+  <p class="eyebrow">Technical Architecture</p>
+  <h2>Built to be upgraded, not rewritten</h2>
+
+  <div class="grid-2" style="margin-top:32px;">
+    <div>
+      <h3 style="margin-bottom:16px;">Current tech stack</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; gap:12px; align-items:start;">
+          <span class="badge badge-cyan" style="flex-shrink:0; font-size:10px;">Backend</span>
+          <p style="font-size:13px; color:var(--soft);">Node.js + Express — pipeline orchestration, dual-provider LLM routing (OpenAI + Gemini), Bayesian feedback model</p>
+        </div>
+        <div style="display:flex; gap:12px; align-items:start;">
+          <span class="badge badge-violet" style="flex-shrink:0; font-size:10px;">Frontend</span>
+          <p style="font-size:13px; color:var(--soft);">Vanilla HTML/CSS/JS (zero build step for the app) + Next.js 15 marketing page. 3Dmol.js for molecular viewer.</p>
+        </div>
+        <div style="display:flex; gap:12px; align-items:start;">
+          <span class="badge badge-emerald" style="flex-shrink:0; font-size:10px;">AI</span>
+          <p style="font-size:13px; color:var(--soft);">OpenAI GPT-4o / Gemini 1.5–2.0 Flash. Auto-detect from key prefix. Deterministic rule-based fallback — always works offline.</p>
+        </div>
+        <div style="display:flex; gap:12px; align-items:start;">
+          <span class="badge badge-amber" style="flex-shrink:0; font-size:10px;">Quantum</span>
+          <p style="font-size:13px; color:var(--soft);">VQE abstraction layer with identical API contract to Qiskit Runtime. Drop-in real quantum backend with zero frontend changes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom:16px;">Upgrade path to production</h3>
+      <ul class="bullet-list">
+        <li><strong>Real quantum backend:</strong> swap <code style="font-family:var(--mono); font-size:11.5px; color:var(--cyan);">runVqeLikeEnergyProfile()</code> for Qiskit Runtime call — zero UI changes</li>
+        <li><strong>Persistent model:</strong> replace in-memory feedback object with PostgreSQL + Prisma — model survives server restarts</li>
+        <li><strong>Live SCADA integration:</strong> connect Pipeline Input to GPS Renewables plant sensors — auto-populate real feedstock composition</li>
+        <li><strong>Multi-user auth:</strong> add NextAuth.js — individual experiment histories per GPS Renewables engineer</li>
+        <li><strong>Real DFT data:</strong> plug in Open Catalyst Project (1.2M DFT calculations) as the retrieval backbone</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="grid-4" style="margin-top:4px;">
+    <div class="card" style="text-align:center; padding:18px;">
+      <p style="font-family:var(--mono); font-size:2rem; font-weight:700; color:var(--cyan);">10</p>
+      <p style="font-size:12px; color:var(--muted); margin-top:4px;">API endpoints</p>
+    </div>
+    <div class="card" style="text-align:center; padding:18px;">
+      <p style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#a78bfa;">11</p>
+      <p style="font-size:12px; color:var(--muted); margin-top:4px;">Seeded catalysts</p>
+    </div>
+    <div class="card" style="text-align:center; padding:18px;">
+      <p style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#34d399;">4</p>
+      <p style="font-size:12px; color:var(--muted); margin-top:4px;">GPS reactions</p>
+    </div>
+    <div class="card" style="text-align:center; padding:18px;">
+      <p style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#fbbf24;">2</p>
+      <p style="font-size:12px; color:var(--muted); margin-top:4px;">AI providers</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SLIDE 12 — CLOSING                                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="slide" style="min-height:100vh; justify-content:center;">
+  <span class="slide-num">12 / 12</span>
+
+  <p class="eyebrow">The Pitch in One Line</p>
+  <h2 style="max-width:820px;">We're designing an AI-native R&amp;D operating system that combines generative design, predictive modelling, experimental feedback, and collaborative scientific workflows into a <span class="grad">continuously improving discovery engine</span>.</h2>
+
+  <div class="quote-block" style="margin-top:36px; max-width:760px;">
+    The real bottleneck in catalyst and pathway discovery is not lack of data — it's the inability to efficiently convert experimental outcomes into continuously improving scientific intelligence. Our platform is designed to close that loop.
+  </div>
+
+  <div class="closing-grid">
+    <div>
+      <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:16px; font-weight:700;">What judges will remember</p>
+      <ul class="bullet-list">
+        <li>Feedback loops that visibly learn from lab data</li>
+        <li>Scientific memory — not just logs, but intelligence</li>
+        <li>Explainable AI — not just scores, but reasoning</li>
+        <li>Deployment realism — uncertainty, feasibility, fallbacks</li>
+        <li>GPS Renewables-native from day one</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:16px; font-weight:700;">Links</p>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <p style="font-size:11px; color:var(--muted); margin-bottom:3px;">Live Demo</p>
+          <p style="font-family:var(--mono); color:var(--cyan);">quantum-catalyst-ai.vercel.app</p>
+        </div>
+        <div>
+          <p style="font-size:11px; color:var(--muted); margin-bottom:3px;">GitHub</p>
+          <p style="font-family:var(--mono); color:var(--cyan);">github.com/d2Anubis/QuantumCatalyst-AI</p>
+        </div>
+        <div>
+          <p style="font-size:11px; color:var(--muted); margin-bottom:3px;">Free AI key for demo</p>
+          <p style="font-family:var(--mono); color:var(--soft);">aistudio.google.com/apikey</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-hint">
+  Scroll to navigate · 12 slides · QuantumCatalyst AI — GPS Renewables R&amp;D Accelerator Hackathon
+</div>
+
+</body>
+</html>
