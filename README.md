@@ -143,7 +143,7 @@ Or configure the key directly in the app via the Settings (⚙) panel — it is 
 
 ```bash
 npm run build    # Next.js static export → /out directory
-npm start        # Express serves both /out and /public
+npm start        # Express serves Next export from /out and platform UI from public/app → /app
 ```
 
 ---
@@ -205,10 +205,11 @@ QuantumCatalyst AI/
 ├── app/                    # Next.js marketing page
 │   ├── page.jsx            # Landing page (3D canvas, pipeline overview, pricing)
 │   └── layout.jsx          # Root layout + Google Fonts
-├── public/                 # Vanilla JS app (served at /app)
-│   ├── index.html          # Full platform UI
-│   ├── app.js              # Frontend logic (pipeline, chat, settings, tracker)
-│   └── styles.css          # Design system (dark theme, glass cards)
+├── public/
+│   └── app/                # Vanilla JS platform (served at /app; copied into out/app/ on export)
+│       ├── index.html      # Full platform UI
+│       ├── app.js          # Frontend logic (pipeline, chat, settings, tracker)
+│       └── styles.css      # Design system (dark theme, glass cards)
 ├── data/
 │   ├── catalysts.json      # Seeded catalyst database (11 entries incl. 6 GPS-specific)
 │   └── experiment_logs.json # Created at runtime
@@ -216,6 +217,8 @@ QuantumCatalyst AI/
 ├── next.config.js          # Next.js static export config
 └── package.json
 ```
+
+**Vercel:** The site uses `output: "export"` (`out/`). The platform UI lives in `public/app/` so the build copies it to `out/app/` and `/app/` is served as static files. The REST API is implemented in `server.js` and is **not** included in that static bundle; for a live demo with pipeline + feedback, run Express locally or deploy the Node server (e.g. Railway, Render).
 
 ---
 

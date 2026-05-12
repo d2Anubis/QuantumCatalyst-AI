@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Cinematic investor-grade demo website for QuantumCatalyst AI",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

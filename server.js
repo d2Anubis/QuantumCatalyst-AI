@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// Functional app — served at /app (all relative asset/API paths still resolve correctly)
-app.use("/app", express.static(path.join(__dirname, "public")));
+// Vanilla platform UI — lives in public/app/ so Next static export copies it to out/app/ (Vercel)
+app.use("/app", express.static(path.join(__dirname, "public", "app")));
 
 // Marketing page — Next.js static export served at /
 // Built by `npm run build` into the `out/` directory
