@@ -168,7 +168,7 @@ Runs the full 6-step discovery pipeline.
   "reactionKey": "biogas-upgrading",
   "useCase": "High H₂S selectivity, cost-sensitive pilot",
   "apiKey": "AIza...",
-  "model": "gemini-1.5-flash"
+  "model": "gemini-2.5-flash"
 }
 ```
 

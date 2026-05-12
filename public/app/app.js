@@ -225,22 +225,29 @@ const OPENAI_MODELS = [
   { value: "gpt-4o",        label: "GPT-4o — most capable" },
   { value: "gpt-4-turbo",   label: "GPT-4 Turbo" },
 ];
-const GEMINI_MODELS = [
-  { value: "gemini-1.5-flash",      label: "Gemini 1.5 Flash — fast, free tier" },
-  { value: "gemini-1.5-pro",        label: "Gemini 1.5 Pro — most capable" },
-  { value: "gemini-2.0-flash",      label: "Gemini 2.0 Flash — latest" },
-  { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash-Lite — ultra-fast" },
-];
-
 function getDefaultModel(provider) {
-  return provider === "gemini" ? "gemini-1.5-flash" : "gpt-4o-mini";
+  return provider === "gemini" ? "gemini-2.5-flash" : "gpt-4o-mini";
 }
 
 // ── Settings ─────────────────────────────────────────────────
+/** Retired Gemini ids removed from generateContent — migrate saved browser settings */
+const GEMINI_MODEL_ALIASES = {
+  "gemini-1.5-flash": "gemini-2.5-flash",
+  "gemini-1.5-pro": "gemini-2.5-pro",
+  "gemini-2.0-flash": "gemini-2.5-flash",
+  "gemini-2.0-flash-lite": "gemini-2.5-flash-lite"
+};
+
 function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem("qcai_settings") || "{}");
     state.settings = { ...state.settings, ...saved };
+    const m = state.settings.model;
+    const next = GEMINI_MODEL_ALIASES[m];
+    if (next) {
+      state.settings.model = next;
+      persistSettings();
+    }
   } catch {}
   updateChatKeyWarning();
   syncProviderUI();
