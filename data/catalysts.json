@@ -1,6 +1,6 @@
 [
   {
-    "id": "GPS-001",
+    "id": "BioGenCat-001",
     "name": "K2CO3-Alumina Sorbent",
     "family": "Alkali-based",
     "supportedReactions": ["biogas-upgrading", "biogas-co2-utilization"],
@@ -13,7 +13,7 @@
     "xyz": "7\nK2CO3-Al2O3 sorbent\nK 0.000 0.000 0.000\nK 3.100 0.000 0.000\nC 1.550 1.200 0.000\nO 1.550 2.420 0.000\nO 0.500 0.650 -1.050\nO 2.600 0.650 -1.050\nAl -1.800 0.500 0.200"
   },
   {
-    "id": "GPS-002",
+    "id": "BioGenCat-002",
     "name": "Ni-CeO2 Reforming Catalyst",
     "family": "Ni-Ce",
     "supportedReactions": ["biomethane-to-hydrogen", "biogas-co2-utilization"],
@@ -26,7 +26,7 @@
     "xyz": "8\nNi-CeO2 surface\nNi 0.000 0.000 0.000\nCe 2.200 0.100 0.300\nO -1.400 0.900 -0.100\nO 0.700 -1.500 0.200\nO 1.500 1.700 0.600\nO 3.200 -0.800 0.700\nH 4.000 -1.400 1.100\nH -2.200 1.500 -0.500"
   },
   {
-    "id": "GPS-003",
+    "id": "BioGenCat-003",
     "name": "ZnO-Fe2O3 Guard Bed",
     "family": "Zn-Fe oxide",
     "supportedReactions": ["biogas-upgrading", "waste-to-biogas"],
@@ -39,7 +39,7 @@
     "xyz": "7\nZnO-Fe2O3 desulfurization\nZn 0.000 0.000 0.000\nFe 1.900 0.200 0.100\nFe 3.700 0.300 0.200\nO -1.200 0.700 -0.200\nO 0.800 -1.300 0.100\nO 2.900 1.300 0.500\nS 1.400 -0.700 -1.200"
   },
   {
-    "id": "GPS-004",
+    "id": "BioGenCat-004",
     "name": "Ni-Al2O3 Methanation",
     "family": "Ni-based",
     "supportedReactions": ["biogas-co2-utilization", "syngas-to-ethanol"],
@@ -52,7 +52,7 @@
     "xyz": "7\nNi-Al2O3 Sabatier\nNi 0.000 0.000 0.000\nAl 2.000 0.200 0.300\nO -1.300 0.800 -0.200\nO 0.700 -1.400 0.100\nO 3.000 1.200 0.700\nH 3.800 1.800 1.100\nH -2.000 1.400 -0.600"
   },
   {
-    "id": "GPS-005",
+    "id": "BioGenCat-005",
     "name": "MoS2 Hydrodesulfurization",
     "family": "Mo-S",
     "supportedReactions": ["waste-to-biogas", "biogas-upgrading"],
@@ -65,7 +65,7 @@
     "xyz": "8\nMoS2 HDS layer\nMo 0.000 0.000 0.000\nS -1.600 1.000 -0.200\nS 1.600 1.000 -0.200\nS 0.000 -1.900 0.000\nS 0.000 2.700 0.400\nC 0.000 -0.900 1.800\nH 0.880 -0.900 2.440\nH -0.880 -0.900 2.440"
   },
   {
-    "id": "GPS-006",
+    "id": "BioGenCat-006",
     "name": "Ru-Zeolite Methanogen Support",
     "family": "Ru-based",
     "supportedReactions": ["waste-to-biogas", "biomethane-to-hydrogen"],
