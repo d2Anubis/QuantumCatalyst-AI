@@ -77,12 +77,12 @@ Several reaction templates are seeded for anaerobic digestion chains, upgrading,
 
 | Reaction | Conditions | Top candidate (baseline) | Key challenge |
 |---|---|---|---|
-| **Biogas Upgrading → Biomethane** | 25–40°C, 5–10 bar, Raw Biogas (CH₄ 60%, CO₂ 38%, H₂S 2%) | K₂CO₃-Alumina Sorbent (GPS-001) | H₂S poisoning of amine solvents |
-| **Organic Waste → Biogas** | 35–37°C, 1 atm, Agri/organic waste | Ru-Zeolite Methanogen Support (GPS-006) | Lignocellulose hydrolysis rate-limiting |
-| **Biomethane → Green Hydrogen** | 800–900°C, 20–30 bar, Biomethane 97% CH₄ | Ni-CeO₂ Reforming Catalyst (GPS-002) | Ni coking above 750°C |
-| **Biogas CO₂ → Synthetic Methane** | 280–350°C, 5–20 bar, CO₂ + H₂ (4:1) | Ni-Al₂O₃ Methanation (GPS-004) | Thermal runaway in fixed-bed Sabatier |
+| **Biogas Upgrading → Biomethane** | 25–40°C, 5–10 bar, Raw Biogas (CH₄ 60%, CO₂ 38%, H₂S 2%) | K₂CO₃-Alumina Sorbent (BioGenCat-001) | H₂S poisoning of amine solvents |
+| **Organic Waste → Biogas** | 35–37°C, 1 atm, Agri/organic waste | Ru-Zeolite Methanogen Support (BioGenCat-006) | Lignocellulose hydrolysis rate-limiting |
+| **Biomethane → Green Hydrogen** | 800–900°C, 20–30 bar, Biomethane 97% CH₄ | Ni-CeO₂ Reforming Catalyst (BioGenCat-002) | Ni coking above 750°C |
+| **Biogas CO₂ → Synthetic Methane** | 280–350°C, 5–20 bar, CO₂ + H₂ (4:1) | Ni-Al₂O₃ Methanation (BioGenCat-004) | Thermal runaway in fixed-bed Sabatier |
 
-Six biogas-focused catalysts are seeded in the database (`GPS-001` through `GPS-006`), including desulfurisation sorbents, reforming catalysts, and Sabatier methanation materials.
+Six biogas-focused catalysts are seeded in the database (`BioGenCat-001` through `BioGenCat-006`), including desulfurisation sorbents, reforming catalysts, and Sabatier methanation materials.
 
 ---
 
@@ -180,7 +180,7 @@ Submits a lab measurement to update the model.
 ```json
 {
   "reactionKey": "biogas-upgrading",
-  "candidateId": "GPS-001",
+  "candidateId": "BioGenCat-001",
   "measuredYield": 0.91,
   "measuredSelectivity": 0.97,
   "measuredStability": 0.88
@@ -355,9 +355,9 @@ This platform was designed to be demoed, not just described. Here is a suggested
 | 0:00–1:00 | Landing page (`/`) — 3D rotating catalyst lattice | "This is the OS for catalyst discovery. The 3D structure is real — it's a Cu-Zn alloy we'll rank in 30 seconds." |
 | 1:00–2:00 | Open the app (`/app`) — point to Pipeline Control card | "Here's the cockpit. Pick Biogas Upgrading. Watch the conditions auto-fill: 25°C, 5–10 bar, raw biogas with 2% H₂S." |
 | 2:00–3:30 | Hit Run Discovery — watch the 6-step tracker animate | "Retrieval — Quantum simulation — Generative design — Ranking. All of that in under a second. In a real lab, this is 6–18 months." |
-| 3:30–4:30 | Scroll to KPI dashboard + Candidates table | "GPS-001 — K₂CO₃-Alumina — 96% selectivity. Confidence: High. Feasibility: Readily synthesisable. The AI ranked 9 candidates and tells you exactly how sure it is about each one." |
+| 3:30–4:30 | Scroll to KPI dashboard + Candidates table | "BioGenCat-001 — K₂CO₃-Alumina — 96% selectivity. Confidence: High. Feasibility: Readily synthesisable. The AI ranked 9 candidates and tells you exactly how sure it is about each one." |
 | 4:30–5:00 | Click “Why?” on the second-ranked candidate | "This is the Hypothesis Engine. The AI explains the structural reason this candidate underperforms on stability — and suggests what to change. Not just prediction. Scientific reasoning." |
-| 5:00–5:30 | Load GPS-001 in 3D viewer | "This is the actual molecular geometry. Rotate it, switch to sphere mode, inspect the active site." |
+| 5:00–5:30 | Load BioGenCat-001 in 3D viewer | "This is the actual molecular geometry. Rotate it, switch to sphere mode, inspect the active site." |
 | 5:30–6:30 | Scroll to AI Copilot inline summary | "The AI already wrote the experiment plan. Three steps: which candidates to bench-screen first, what to track at 24h and 72h, and what to feed back into the model." |
 | 6:30–7:00 | Open AI Copilot chat → ask a follow-up question | "This works with a Gemini key — free tier. Every field engineer gets a PhD-level copilot in their pocket." |
 | 7:00–8:30 | Submit a feedback result (0.91 yield, 0.97 selectivity) and point to delta + Scientific Memory | "Predicted 88.9% activity — lab measured 91.0%. The model sees that +2.1% error and corrects itself permanently. The Scientific Memory panel shows the learned correction being applied to every future run. This is the loop closing in real time." |
