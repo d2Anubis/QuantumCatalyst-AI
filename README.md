@@ -2,7 +2,7 @@
 
 **The operating system for catalyst discovery — built for industrial-scale sustainable chemistry.**
 
-Live demo: [quantum-catalyst-ai.vercel.app](https://quantum-catalyst-ai.vercel.app)
+Live demo: https://qomputing-3uas.vercel.app/app/
 GitHub: [d2Anubis/QuantumCatalyst-AI](https://github.com/d2Anubis/QuantumCatalyst-AI)
 
 ---
