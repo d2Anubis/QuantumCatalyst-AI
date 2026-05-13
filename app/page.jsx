@@ -75,7 +75,7 @@ const PRICING = [
     name: "Pro",
     price: "$490",
     sub: "per month — billed annually",
-    features: ["Unlimited reactions", "GPT-4o or Gemini AI Copilot (your key)", "GPS Renewables biogas reactions", "Generative catalyst design", "Feedback-loop model updates", "Priority API access", "Email support"],
+    features: ["Unlimited reactions", "GPT-4o or Gemini AI Copilot (your key)", "Biogas & reforming reaction templates", "Generative catalyst design", "Feedback-loop model updates", "Priority API access", "Email support"],
     cta: "Start Free Trial",
     variant: "default",
     highlight: true,
@@ -273,7 +273,7 @@ export default function Home() {
             </h1>
             <p className="max-w-xl text-[17px] leading-relaxed text-slate-400">
               QuantumCatalyst AI combines quantum chemistry, generative AI (OpenAI &amp; Gemini), and continuous
-              experimental learning to discover breakthrough catalysts — from GPS Renewables biogas upgrading to
+              experimental learning to discover breakthrough catalysts — from industrial biogas upgrading to
               sustainable aviation fuel, carbon conversion, and green hydrogen.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -288,7 +288,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="flex flex-wrap gap-6 pt-2">
-              {[["10×", "Faster screening"], ["37%", "Error reduction vs DFT"], ["7 reactions", "incl. GPS Renewables"]].map(([val, label]) => (
+              {[["10×", "Faster screening"], ["37%", "Error reduction vs DFT"], ["7 reactions", "incl. biogas templates"]].map(([val, label]) => (
                 <div key={label}>
                   <p className="font-display text-2xl font-bold text-white">{val}</p>
                   <p className="text-xs text-slate-500">{label}</p>
@@ -435,17 +435,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── GPS Renewables Case Study ────────────────────────── */}
+      {/* ── Industrial biogas vignette ─────────────────────────── */}
       <section className="section-shell reveal">
         <div className="glass-card p-8">
           <div className="flex items-center gap-3 mb-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">Partner case study</p>
-            <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.07] px-3 py-0.5 text-[10px] font-semibold text-emerald-200">GPS Renewables</span>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">Use case</p>
+            <span className="rounded-full border border-emerald-300/25 bg-emerald-300/[0.07] px-3 py-0.5 text-[10px] font-semibold text-emerald-200">Biogas & biomethane</span>
           </div>
-          <h3 className="font-display text-3xl font-semibold text-white">Accelerating India's Biogas Revolution</h3>
+          <h3 className="font-display text-3xl font-semibold text-white">From plant data to ranked catalysts</h3>
           <p className="mt-2 text-[13px] text-slate-500 max-w-2xl">
-            GPS Renewables builds India's largest network of biogas plants — processing organic waste into compressed biogas (CBG), green hydrogen, and biomethane.
-            QuantumCatalyst AI powers their catalyst R&D pipeline.
+            Large-scale digesters and upgrading trains face the same bottleneck: catalytic materials fail under real feedstocks long before the lab can screen replacements.
+            QuantumCatalyst AI compresses that loop into a single interactive run.
           </p>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div className="space-y-4 text-[14px] text-slate-300">
@@ -454,19 +454,18 @@ export default function Home() {
                 Screening replacements via lab trials takes 3–12 months per candidate.
               </p>
               <p>
-                <span className="font-semibold text-white">Workflow:</span> GPS Renewables feeds real plant data (feedstock composition, H₂S levels, CH₄ purity targets) into QuantumCatalyst AI →
-                VQE simulation ranks sorbents and reforming catalysts → Gemini AI Copilot interprets results in plain language for field engineers.
+                <span className="font-semibold text-white">Workflow:</span> Operators feed composition and purity targets into QuantumCatalyst AI →
+                VQE-flavoured simulation ranks sorbents and reforming catalysts → the AI Copilot translates trade-offs for non-specialists on site.
               </p>
               <p>
-                <span className="font-semibold text-white">Outcome:</span> Catalyst replacement cycles optimised, H₂S breakthrough incidents reduced,
-                and biomethane purity consistently above 97% — with a feedback loop that learns from every GPS Renewables plant run.
+                <span className="font-semibold text-white">Outcome:</span> Faster shortlists, clearer uncertainty, and a feedback channel so every onsite measurement retrains ranking weights for the next run.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
                 ["10×", "Faster screening",        "border-cyan-300/30 bg-cyan-300/[0.08]",     "text-cyan-100"],
                 [">97%", "CH₄ purity target",       "border-emerald-300/30 bg-emerald-300/[0.08]","text-emerald-100"],
-                ["4 reactions", "GPS-specific",     "border-violet-300/30 bg-violet-300/[0.08]", "text-violet-100"],
+                ["4 reactions", "Template-ready",    "border-violet-300/30 bg-violet-300/[0.08]", "text-violet-100"],
                 ["Gemini", "AI Copilot ready",      "border-blue-300/30 bg-blue-300/[0.08]",     "text-blue-100"],
               ].map(([val, label, border, textColor]) => (
                 <div key={label} className={`rounded-xl border p-4 text-center ${border}`}>
@@ -582,7 +581,7 @@ export default function Home() {
           Build the Future of<br />Sustainable Chemistry
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-[16px] text-slate-400 leading-relaxed">
-          From GPS Renewables biogas plants to synthetic aviation fuels, QuantumCatalyst AI accelerates catalyst discovery at quantum scale — with OpenAI and Google Gemini AI built in.
+          From industrial biogas and biomethane trains to synthetic aviation fuels, QuantumCatalyst AI accelerates catalyst discovery at quantum scale — with OpenAI and Google Gemini AI built in.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Button size="lg" onClick={() => window.open(appUrl, "_blank")}>

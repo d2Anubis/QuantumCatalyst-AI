@@ -1491,7 +1491,7 @@ tbody tr:last-child td { border-bottom: none; }
 .provider-tab:hover { color: var(--text-soft); background: rgba(255,255,255,0.06); }
 .provider-tab-active { background: rgba(34,211,238,0.12); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
 
-/* GPS Renewables category badge in reaction select */
+/* Optional: accent for biogas-category labels in reaction select */
 .reaction-category-gps { color: #34d399; font-weight: 700; }
 
 /* Provider badge — gemini variant */
