@@ -508,7 +508,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ─────────────────────────────────────────── */}
-      <section id="pricing" className="section-shell reveal">
+      {/* <section id="pricing" className="section-shell reveal">
         <div className="text-center mb-10">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">Pricing</p>
           <h2 className="font-display text-4xl font-semibold text-white">Start discovering today</h2>
@@ -553,7 +553,7 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* ── Trust ───────────────────────────────────────────── */}
       <section className="section-shell reveal">
